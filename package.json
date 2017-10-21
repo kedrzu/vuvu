@@ -1,0 +1,41 @@
+{
+  "name": "vuvu",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kedrzu/vuvu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kedrzu/vuvu/issues"
+  },
+  "homepage": "https://github.com/kedrzu/vuvu#readme",
+  "dependencies": {
+    "inversify": "^4.3.0",
+    "karma-sourcemap-loader": "^0.3.7",
+    "ts-loader": "^3.0.3",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.3",
+    "vue": "^2.5.2",
+    "vuts": "^0.1.1",
+    "webpack": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.6.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-html-detailed-reporter": "^1.1.21",
+    "karma-jasmine": "^1.1.0",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-typescript": "^3.0.8",
+    "karma-webpack": "^2.0.5"
+  }
+}

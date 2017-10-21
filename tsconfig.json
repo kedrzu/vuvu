@@ -1,0 +1,21 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "module": "commonjs",
+        "lib": ["es2015", "dom"],
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./types",
+        "target": "es6",
+        "baseUrl": ".",
+        "sourceMap": true,
+        "declaration": true,
+        "paths": {
+            "vuvu/*": ["src/*"],
+            "vuvu": ["src"]
+        }
+    },
+    // "include": [ "src/**/*", "test/**/*" ],
+    // "exclude": ["dist"]
+}
