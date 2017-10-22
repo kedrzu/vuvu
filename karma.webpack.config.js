@@ -24,6 +24,9 @@ module.exports = {
             }
         ]
     },
+    stats: {
+        errorDetails: true
+    },
     plugins: [
         new Typescript.CheckerPlugin(),
     ],

@@ -1,2 +1,2 @@
-import { PluginFunction } from 'vue';
-export declare let CorePlugin: PluginFunction<void>;
+import Vue from 'vue';
+export declare function CorePlugin(vue: typeof Vue): void;
