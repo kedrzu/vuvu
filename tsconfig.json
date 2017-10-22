@@ -15,7 +15,5 @@
             "vuvu/*": ["src/*"],
             "vuvu": ["src"]
         }
-    },
-    // "include": [ "src/**/*", "test/**/*" ],
-    // "exclude": ["dist"]
+    }
 }

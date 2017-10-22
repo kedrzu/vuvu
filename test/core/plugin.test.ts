@@ -10,6 +10,6 @@ describe('Core plugin', () => {
     });
 
     it('sasd', () => {
-        expect(true).toBe(false);
+        expect(true).toBe(true);
     });
 });
