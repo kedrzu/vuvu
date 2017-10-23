@@ -8,8 +8,4 @@ describe('Core plugin', () => {
         const vm = new Vue();
         expect(vm.$vm).toBe(vm);
     });
-
-    it('sasd', () => {
-        expect(true).toBe(true);
-    });
 });

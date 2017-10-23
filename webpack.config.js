@@ -1,12 +1,12 @@
 var Typescript = require("awesome-typescript-loader");
 
 module.exports = {
-    entry: [__dirname + '/test/core/plugin.spec.ts'],
+    entry: [__dirname + '/test/ioc/ioc.test.ts'],
     output: {
         filename: "foo.js"
     },
     resolve: {
-        extensions: [".ts"],
+        extensions: [".ts", ".js"], 
         plugins: [
             // this plugin must exceptionally be loaded from here
             // otherwise TS paths config will not work
@@ -19,10 +19,7 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: [
                     {
-                        loader: 'awesome-typescript-loader',
-                        // options: {
-                        //     configFileName: 'test/tsconfig.json'
-                        // }
+                        loader: 'awesome-typescript-loader'
                     }
                 ]
             }

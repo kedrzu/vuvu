@@ -3,7 +3,9 @@
     "rules": {
         "quotemark": [true, "single"],
         "arrow-parens": false,
-        "interface-name": [true, "never-prefix"]
+        "interface-name": [true, "never-prefix"],
+        "max-classes-per-file" : false,
+        "prefer-const": false
     },
     "cliOptions": {
         "exclude": [

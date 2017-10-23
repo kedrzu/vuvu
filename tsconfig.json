@@ -5,10 +5,11 @@
         "lib": ["es2015", "dom"],
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
+        "emitDecoratorMetadata": true,
         "outDir": "./types",
         "target": "es6",
         "baseUrl": ".",
+        "mapRoot": ".",
         "sourceMap": true,
         "declaration": true,
         "paths": {
