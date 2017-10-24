@@ -20,11 +20,12 @@
     "inversify": "^4.3.0",
     "reflect-metadata": "^0.1.10",
     "vue": "^2.5.2",
-    "vuts": "^0.1.1",
+    "vuts": "^0.1.2",
     "webpack": "^3.8.1"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
+    "@types/node": "^8.0.46",
     "awesome-typescript-loader": "^3.2.3",
     "jasmine-core": "^2.8.0",
     "karma": "^1.7.1",
@@ -35,9 +36,10 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-typescript": "^3.0.8",
     "karma-webpack": "^2.0.5",
-    "prettier-eslint": "^8.2.1",
     "ts-loader": "^3.0.3",
     "tslint": "^5.7.0",
-    "typescript": "^2.5.3"
+    "typescript": "^2.5.3",
+    "vue-loader": "^13.3.0",
+    "vue-template-compiler": "^2.5.2"
   }
 }

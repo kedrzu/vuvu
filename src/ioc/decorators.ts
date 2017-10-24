@@ -19,7 +19,6 @@ export function foo(target: any, propertyKey: string, propertyDescriptor: Proper
     injectMeta[propertyKey] = key;
 }
 
-
 export function inject(identifier?: symbol | string) {
     return <T>(target: any, propertyKey: string) => {
         const key = identifier || Reflect.getMetadata('design:type', target, propertyKey);
@@ -28,6 +27,9 @@ export function inject(identifier?: symbol | string) {
         if (!injectMeta) {
             injectMeta = {};
             Reflect.defineMetadata(metadataKey, injectMeta, target);
+            Reflect.defineMetadata(metadataKey, injectMeta, target.constructor);
+            target['qwe'] = injectMeta;
+            target.constructor['asd'] = injectMeta;
         }
 
         injectMeta[propertyKey] = key;

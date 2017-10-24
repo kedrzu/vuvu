@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Wed Oct 18 2017 23:18:56 GMT+0200 (Środkowoeuropejski czas letni)
 
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -19,7 +19,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '**/*.ts': ['webpack']
+            '**/*.ts': ['webpack', 'sourcemap']
         },
 
         webpack: require('./karma.webpack.config'),
@@ -53,19 +53,6 @@ module.exports = function(config) {
         // Concurrency level
         // how many browser should be started simultaneous
         concurrency: Infinity,
-
-
-        // plugins: [			   
-        //     'karma-jasmine',                      // Required plugin 
-        //     // 'karma-chrome-launcher',              // Launches Chrome 
-        //     // 'karma-phantomjs-launcher',           // Launches PhantomJS 
-        //     'karma-html-detailed-reporter'        // Adds plugin 
-        // ],
-
-        // karmaTypescriptConfig: {
-        //     // options passed to the typescript compiler
-        //     tsconfig: 'karma.tsconfig.json'
-        // },
 
         mime: {
             'text/x-typescript': ['ts', 'tsx']

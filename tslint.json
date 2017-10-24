@@ -1,15 +1,23 @@
 {
     "extends": "tslint:recommended",
     "rules": {
-        "quotemark": [true, "single"],
+        "quotemark": [
+            true,
+            "single"
+        ],
         "arrow-parens": false,
-        "interface-name": [true, "never-prefix"],
-        "max-classes-per-file" : false,
-        "prefer-const": false
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
+        "max-classes-per-file": false,
+        "prefer-const": false,
+        "trailing-comma": false,
+        "no-var-requires": false
     },
     "cliOptions": {
         "exclude": [
             "node_modules"
         ]
     }
-  }
+}

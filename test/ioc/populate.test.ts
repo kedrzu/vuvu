@@ -1,11 +1,4 @@
-import { Container } from 'inversify';
-import Vue from 'vue';
-
-import * as vuts from 'vuts';
-import * as vuvu from 'vuvu';
 import * as ioc from 'vuvu/ioc';
-
-Vue.use(ioc.IocPlugin);
 
 describe('IoC populate object', () => {
 
@@ -53,5 +46,35 @@ describe('IoC populate object', () => {
 
         expect(bar.prop).toBeDefined();
         expect(bar.prop).toBeTruthy(p => p instanceof Foo);
+    });
+
+    it('injects service when inherited', () => {
+        @ioc.injectable()
+        class Foo {
+        }
+
+        class Bar {
+            @ioc.inject()
+            public prop: Foo;
+        }
+
+        class Baz extends Bar {
+            @ioc.inject()
+            public foo: Foo;
+        }
+
+        let container = ioc.container.createChild();
+
+        container.bind(Foo).toSelf();
+
+        let baz = new Baz();
+
+        ioc.populate(baz, container);
+
+        expect(baz.prop).toBeDefined('should be injected into base');
+        expect(baz.prop).toBeTruthy(p => p instanceof Foo);
+
+        expect(baz.foo).toBeDefined('should be injected into derived type');
+        expect(baz.foo).toBeTruthy(p => p instanceof Foo);
     });
 });

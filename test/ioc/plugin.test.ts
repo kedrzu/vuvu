@@ -1,8 +1,6 @@
 import { Container } from 'inversify';
 import Vue from 'vue';
 
-import * as vuts from 'vuts';
-import * as vuvu from 'vuvu';
 import * as ioc from 'vuvu/ioc';
 
 Vue.use(ioc.IocPlugin);

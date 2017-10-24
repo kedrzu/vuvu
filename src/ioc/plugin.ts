@@ -8,4 +8,13 @@ export function IocPlugin(vue: typeof Vue) {
             return container;
         },
     });
+
+    vue.mixin({
+        beforeCreate() {
+            //debugger;
+        },
+        created() {
+            //debugger;
+        }
+    })
 }

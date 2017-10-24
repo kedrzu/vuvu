@@ -1,6 +1,7 @@
 var Typescript = require("awesome-typescript-loader");
+var webpack = require('webpack');
 
-module.exports = {  
+module.exports = {
     resolve: {
         extensions: [".ts", ".js"],
         plugins: [
@@ -18,14 +19,23 @@ module.exports = {
                         loader: 'awesome-typescript-loader'
                     }
                 ]
-            }
+            },
+            {
+                test: /\.vue$/,
+                loader: "vue-loader",
+                options: {
+                    loaders: {
+                        ts: 'awesome-typescript-loader'
+                    }
+                }
+            },
         ]
     },
     stats: {
         errorDetails: true
     },
     plugins: [
-        new Typescript.CheckerPlugin(),
+        new Typescript.CheckerPlugin()
     ],
-    devtool: 'source-map'
+    devtool: 'eval-source-map'
 };
