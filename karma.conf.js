@@ -11,7 +11,7 @@ module.exports = function (config) {
         frameworks: ['jasmine'],
 
         // list of files / patterns to load in the browser
-        files: [{ pattern: 'test/**/*.test.ts' }],
+        files: [{ pattern: 'test/**/*.test.ts', watched: false }],
 
         // list of files to exclude
         exclude: [],
@@ -27,7 +27,7 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['kjhtml'],
+        reporters: ['kjhtml', 'htmlDetailed'],
 
         // web server port
         port: 9876,
@@ -56,6 +56,10 @@ module.exports = function (config) {
 
         mime: {
             'text/x-typescript': ['ts', 'tsx']
+        },
+
+        htmlDetailed: {
+            dir: './test/.reports'
         }
     });
 };

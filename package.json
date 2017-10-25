@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx karma start"
+    "test": "npx karma start",
+    "build": "npx tsc --project tsconfig.build.json"
   },
   "repository": {
     "type": "git",
