@@ -10,9 +10,15 @@ export function IocPlugin(vue: typeof Vue) {
         },
     });
 
+    // allows to use custom component options
+    vue.config.optionMergeStrategies.iocInject = iocOptionMerge;
+    vue.config.optionMergeStrategies.iocProvide = iocOptionMerge;
+
     vue.mixin({
+
         created(this: Vue) {
 
+            // takes container that is specified in options or inherits it from parent
             let container = this.$options.container || (this.$parent && this.$parent.$container);
             if (!container) {
                 return;
@@ -20,7 +26,7 @@ export function IocPlugin(vue: typeof Vue) {
 
             // if component provides anything we need to create a child container
             // so child components would have their own dependency scope
-            let provides = getProvideConfig(this);
+            let provides = this.$options.iocProvide;
             if (provides) {
                 container = container.createChild();
             }
@@ -28,7 +34,7 @@ export function IocPlugin(vue: typeof Vue) {
             this[containerSymbol] = container;
 
             // inject values
-            let injects = getInjectConfig(this);
+            let injects = this.$options.iocInject;
             if (injects) {
                 for (let prop of Object.keys(injects)) {
                     let identifier = injects[prop];
@@ -54,18 +60,6 @@ export function IocPlugin(vue: typeof Vue) {
     });
 }
 
-function getInjectConfig(vm: Vue) {
-    return vm.$options.ioc && vm.$options.ioc.inject;
-}
-
-function getProvideConfig(vm: Vue) {
-    return vm.$options.ioc && vm.$options.ioc.provide;
-}
-
-function setupContainer(vm: Vue) {
-    if (vm.$options.container) {
-        vm[containerSymbol] = vm.$options.container;
-    } else if (vm.$parent && vm.$parent.$container) {
-        vm[containerSymbol] = vm.$parent.$container;
-    }
+function iocOptionMerge(parentVal, childVal) {
+    return parentVal || childVal ? Object.assign({}, parentVal, childVal) : null;
 }

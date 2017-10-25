@@ -18,8 +18,7 @@ export function inject(identifier?: interfaces.ServiceIdentifier<any>) {
 
             // setup ioc configuration for this component
             reflection.addDecorator(target, options => {
-                let iocOptions = options.ioc || (options.ioc = {});
-                let injectOptions = iocOptions.inject || (iocOptions.inject = {});
+                let injectOptions = options.iocInject || (options.iocInject = {});
 
                 injectOptions[propertyKey] = identifier;
             });
@@ -41,8 +40,7 @@ export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
 
         // setup ioc provide configuration for this component
         reflection.addDecorator(target, options => {
-            let iocOptions = options.ioc || (options.ioc = {});
-            let provideOptions = iocOptions.provide || (iocOptions.provide = {});
+            let provideOptions = options.iocProvide || (options.iocProvide = {});
 
             provideOptions[propertyKey] = identifier;
         });

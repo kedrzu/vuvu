@@ -160,4 +160,35 @@ describe('vue components service injection', () => {
         expect(child.bar).toBe(container.get(Bar), 'should inject dependency from main continer into child');
     });
 
+    it('injects dependencies into inherited components', () => {
+
+        @ioc.injectable()
+        class Foo { }
+
+        @vuvu.component()
+        class Base extends Vue {
+
+            @ioc.inject()
+            public foo: Foo;
+        }
+
+        @vuvu.component()
+        class Inherited extends Base {
+
+            @ioc.inject()
+            public fooz: Foo;
+        }
+
+        let container = new ioc.Container();
+
+        container.bind(Foo).toSelf().inSingletonScope();
+
+        let cmp = new Inherited({
+            container: container
+        });
+
+        expect(cmp.foo).toBe(container.get(Foo), 'should inject inherited prop');
+        expect(cmp.fooz).toBe(container.get(Foo), 'should inject own prop');
+    });
+
 });

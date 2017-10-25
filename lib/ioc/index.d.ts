@@ -8,17 +8,14 @@ declare module 'vue/types/vue' {
     }
 }
 declare module 'vue/types/options' {
-    interface ComponentIocOptions {
-        provide?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
-        };
-        inject?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
-        };
-    }
     interface ComponentOptions<V extends Vue, Data, Methods, Computed, PropsDef> {
         container?: Container;
-        ioc?: ComponentIocOptions;
+        iocProvide?: {
+            [prop: string]: interfaces.ServiceIdentifier<any>;
+        };
+        iocInject?: {
+            [prop: string]: interfaces.ServiceIdentifier<any>;
+        };
     }
 }
 export { injectable, Container } from 'inversify';
