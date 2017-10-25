@@ -2,6 +2,11 @@ import { Container, interfaces } from 'inversify';
 import Vue from 'vue';
 export * from './decorators';
 export * from './plugin';
+declare module 'vue/types/vue' {
+    interface Vue {
+        readonly $container: Container;
+    }
+}
 declare module 'vue/types/options' {
     interface ComponentIocOptions {
         provide?: {

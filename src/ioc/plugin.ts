@@ -12,6 +12,7 @@ export function IocPlugin(vue: typeof Vue) {
 
     vue.mixin({
         created(this: Vue) {
+
             let container = this.$options.container || (this.$parent && this.$parent.$container);
             if (!container) {
                 return;
@@ -45,7 +46,7 @@ export function IocPlugin(vue: typeof Vue) {
                     // object property or function call
                     container.bind(identifier).toDynamicValue(() => {
                         let value = this[prop];
-                        return typeof value === 'function' ? value() : value;
+                        return typeof value === 'function' ? value.call(this) : value;
                     });
                 }
             }

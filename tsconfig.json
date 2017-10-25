@@ -15,10 +15,6 @@
         "mapRoot": ".",
         "sourceMap": true,
         "declaration": true,
-        "typeRoots": [
-            "./node_modules/@types",
-            "./src/@types"
-        ],
         "paths": {
             "vuvu/*": [
                 "src/*"
@@ -27,8 +23,5 @@
                 "src"
             ]
         }
-    },
-    "include": [
-        "./src/**"
-    ]
+    }
 }

@@ -36,8 +36,8 @@ export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
     return <T>(target: any, propertyKey: string) => {
 
         identifier = identifier
-            || Reflect.getMetadata('design:type', target, propertyKey)
-            || Reflect.getMetadata('design:returntype', target, propertyKey);
+            || Reflect.getMetadata('design:returntype', target, propertyKey)
+            || Reflect.getMetadata('design:type', target, propertyKey);
 
         // setup ioc provide configuration for this component
         reflection.addDecorator(target, options => {
