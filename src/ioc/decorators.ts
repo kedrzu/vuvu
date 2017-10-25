@@ -1,4 +1,4 @@
-import { Container, inject as inversifyInject } from 'inversify';
+import { Container, inject as inversifyInject, interfaces } from 'inversify';
 import 'reflect-metadata';
 import Vue from 'vue';
 
@@ -9,36 +9,42 @@ interface PropertyInjectMetadata {
     [prop: string]: any;
 }
 
-const injectSymbol = Symbol('vuvu:inject');
-
-export function inject(identifier?: symbol | string) {
+export function inject(identifier?: interfaces.ServiceIdentifier<any>) {
     return <T>(target: any, propertyKey: string) => {
 
-        const injectIdentitier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
+        identifier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
 
         if (target instanceof Vue) {
-            let meta = target[injectSymbol] as {};
 
+            // setup ioc configuration for this component
+            reflection.addDecorator(target, options => {
+                let iocOptions = options.ioc || (options.ioc = {});
+                let injectOptions = iocOptions.inject || (iocOptions.inject = {});
+
+                injectOptions[propertyKey] = identifier;
+            });
+
+            // also add this property to be reactive
             decorators.data()(target, propertyKey);
-
-            if (!meta) {
-                target[injectSymbol] = meta = {};
-                reflection.addLifecycleHook(target, 'created', createInjectLifecycleHook(meta));
-            }
-
-            meta[propertyKey] = injectIdentitier;
-
         } else {
-            inversifyInject(injectIdentitier)(target, propertyKey);
+            inversifyInject(identifier)(target, propertyKey);
         }
     };
 }
 
-function createInjectLifecycleHook(meta: {}) {
-    return function injectLifecycleHook(this: Vue) {
-        for (let i of Object.keys(meta)) {
-            let resolved = this.$container.resolve(meta[i]);
-            this[i] = resolved;
-        }
+export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
+    return <T>(target: any, propertyKey: string) => {
+
+        identifier = identifier
+            || Reflect.getMetadata('design:type', target, propertyKey)
+            || Reflect.getMetadata('design:returntype', target, propertyKey);
+
+        // setup ioc provide configuration for this component
+        reflection.addDecorator(target, options => {
+            let iocOptions = options.ioc || (options.ioc = {});
+            let provideOptions = iocOptions.provide || (iocOptions.provide = {});
+
+            provideOptions[propertyKey] = identifier;
+        });
     };
 }
