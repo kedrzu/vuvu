@@ -9,21 +9,22 @@ describe('IoC populate object', () => {
 
         let fooType = Symbol('foo');
 
+        @ioc.injectable()
         class Bar {
             @ioc.inject(fooType)
             public prop: any;
         }
 
-        let container = ioc.container.createChild();
+        let container = new ioc.Container();
 
         container.bind(fooType).to(Foo);
 
-        let bar = new Bar();
+        let bar = container.resolve(Bar);
 
-        ioc.populate(bar, container);
-
+        expect(bar).toBeDefined();
+        expect(bar instanceof Bar).toBe(true);
         expect(bar.prop).toBeDefined();
-        expect(bar.prop).toBeTruthy(p => p instanceof Foo);
+        expect(bar.prop instanceof Foo).toBe(true);
     });
 
     it('injects service exported by class', () => {
@@ -31,21 +32,22 @@ describe('IoC populate object', () => {
         class Foo {
         }
 
+        @ioc.injectable()
         class Bar {
             @ioc.inject()
             public prop: Foo;
         }
 
-        let container = ioc.container.createChild();
+        let container = new ioc.Container();
 
         container.bind(Foo).toSelf();
 
-        let bar = new Bar();
+        let bar = container.resolve(Bar);
 
-        ioc.populate(bar, container);
-
+        expect(bar).toBeDefined();
+        expect(bar instanceof Bar).toBe(true);
         expect(bar.prop).toBeDefined();
-        expect(bar.prop).toBeTruthy(p => p instanceof Foo);
+        expect(bar.prop instanceof Foo).toBe(true);
     });
 
     it('injects service when inherited', () => {
@@ -53,28 +55,30 @@ describe('IoC populate object', () => {
         class Foo {
         }
 
+        @ioc.injectable()
         class Bar {
             @ioc.inject()
             public prop: Foo;
         }
 
+        @ioc.injectable()
         class Baz extends Bar {
             @ioc.inject()
             public foo: Foo;
         }
 
-        let container = ioc.container.createChild();
+        let container = new ioc.Container();
 
         container.bind(Foo).toSelf();
 
-        let baz = new Baz();
+        let baz = container.resolve(Baz);
 
-        ioc.populate(baz, container);
+        expect(baz instanceof Baz).toBe(true);
 
         expect(baz.prop).toBeDefined('should be injected into base');
-        expect(baz.prop).toBeTruthy(p => p instanceof Foo);
+        expect(baz.prop instanceof Foo).toBeTruthy();
 
         expect(baz.foo).toBeDefined('should be injected into derived type');
-        expect(baz.foo).toBeTruthy(p => p instanceof Foo);
+        expect(baz.foo instanceof Foo).toBeTruthy();
     });
 });

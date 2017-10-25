@@ -4,7 +4,20 @@ import Vue from "vue";
 
 declare module "vue/types/vue" {
     interface Vue {
-       readonly $container : Container;
+        readonly $container: Container;
+    }
+}
+
+declare module "vue/types/options" {
+
+
+    interface ComponentOptions<
+        V extends Vue,
+        Data=DefaultData<V>,
+        Methods=DefaultMethods<V>,
+        Computed=DefaultComputed,
+        PropsDef=PropsDefinition<DefaultProps>> {
+        container?: Container;
     }
 }
 

@@ -25,17 +25,6 @@ export function getDecorators(target: any): DecoratorCallback[] {
     let proto = target.prototype;
 
     return proto[decoratorsSymbol] || [];
-
-    while (proto !== Object.prototype) {
-        if (proto.hasOwnProperty(decoratorsSymbol)) {
-            let localDecorators = proto[decoratorsSymbol] as DecoratorCallback[];
-            decorators = localDecorators.concat(decorators);
-        }
-
-        proto = Object.getPrototypeOf(proto);
-    }
-
-    return decorators;
 }
 
 export function addLifecycleHook(target: any, hook: string, callback: LifecycleHook) {

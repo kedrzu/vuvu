@@ -1,20 +1,17 @@
 import Vue from 'vue';
 
-import { container } from './container';
-
 export function IocPlugin(vue: typeof Vue) {
     Object.defineProperty(vue.prototype, '$container', {
         get() {
-            return container;
+            return this.$options.container;
         },
     });
 
-    vue.mixin({
-        beforeCreate() {
-            //debugger;
-        },
-        created() {
-            //debugger;
-        }
-    })
+    // vue.mixin({
+    //     created(this: Vue) {
+    //         if(this.$options.container) {
+    //             this.$container = this.$options.container;
+    //         }
+    //     }
+    // })
 }

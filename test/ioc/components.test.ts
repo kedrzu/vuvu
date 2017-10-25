@@ -5,35 +5,33 @@ import * as ioc from 'vuvu/ioc';
 
 Vue.use(ioc.IocPlugin);
 
-@ioc.injectable()
-class Foo {
-
-}
-
-//@vuvu.component()
-class Component extends Vue {
-
-    @ioc.inject()
-    public foo: Foo;
-
-    public boo = "asd";
-}
-
 describe('vue components service injection', () => {
 
     it('injects services with decorator', () => {
-        let cmp = new Component();
+        @ioc.injectable()
+        class Foo {
 
-        let container = ioc.container.createChild();
+        }
+
+        @vuvu.component()
+        class Component extends Vue {
+
+            @ioc.inject()
+            public foo: Foo;
+
+            public boo = 'asd';
+        }
+
+        let container = new ioc.Container();
 
         container.bind(Foo).toSelf();
 
-        expect(cmp).toBeTruthy(c => c instanceof Component);
+        let cmp = new Component({
+            container: container
+        });
 
-        ioc.populate(cmp, container);
-
-        expect(cmp.foo).toBeDefined('should be injected');
-        expect(cmp.foo).toBeTruthy(p => p instanceof Foo);
+        expect(cmp.foo).toBeDefined();
+        expect(cmp.foo instanceof Foo).toBeTruthy('should be instance of injected class');
     });
 
 });
