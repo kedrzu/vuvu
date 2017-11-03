@@ -1,21 +1,4 @@
-import { Container, interfaces } from 'inversify';
-import Vue from 'vue';
+import './defs';
 export * from './decorators';
 export * from './plugin';
-declare module 'vue/types/vue' {
-    interface Vue {
-        readonly $container: Container;
-    }
-}
-declare module 'vue/types/options' {
-    interface ComponentOptions<V extends Vue, Data, Methods, Computed, PropsDef> {
-        container?: Container;
-        iocProvide?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
-        };
-        iocInject?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
-        };
-    }
-}
 export { injectable, Container } from 'inversify';

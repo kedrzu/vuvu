@@ -18,7 +18,7 @@ export function component(id?: string, options?: defs.ComponentOptions) {
 
 export function ref(refName?: string) {
     return (target: any, propertyKey: string) => {
-        reflection.addLifecycleHook(target, 'created', function () {
+        reflection.addLifecycleHook(target, 'created', function() {
             Object.defineProperty(this, propertyKey, {
                 get() {
                     return this.$refs[refName || propertyKey];
@@ -42,33 +42,70 @@ export function prop(options?: PropOptions) {
 
 const dataSymbol = Symbol('vuts:data');
 
-export function data() {
+export function data(defaultValue?: () => any) {
     return (target: any, propertyKey: string) => {
-
-        let meta = target[dataSymbol];
+        let meta = target[dataSymbol] as object;
         if (!meta) {
             target[dataSymbol] = meta = {};
 
             reflection.addDecorator(target, opts => {
-                opts.data = () => Object.assign({}, meta);
+                opts.data = () => {
+                    let values = {};
+                    for (let i in meta) {
+                        if (meta.hasOwnProperty(i)) {
+                            values[i] = meta[i]();
+                        }
+                    }
+
+                    return values;
+                };
             });
         }
 
-        meta[propertyKey] = null;
+        meta[propertyKey] = defaultValue || (() => null);
     };
 }
 
-// export function provide(name?: string) {
-//     return (target: any, propertyKey: string) => {
-//         config.setComponentMeta(target, config.provideSymbol, name || propertyKey, propertyKey);
-//     };
-// }
+const provideSymbol = Symbol('vuts:provide');
 
-// export function inject(propName?: string) {
-//     return (target: any, propertyKey: string) => {
-//         config.setComponentMeta(target, config.injectSymbol, propName || propertyKey, null);
-//     };
-// }
+export function provide(name?: string) {
+    return (target: any, propertyKey: string) => {
+        let meta = target[provideSymbol] as object;
+        if (!meta) {
+            target[provideSymbol] = meta = {};
+
+            reflection.addDecorator(target, opts => {
+                opts.provide = function() {
+                    const values = {};
+
+                    for (let i in meta) {
+                        if (meta.hasOwnProperty(i)) {
+                            Object.defineProperty(values, i, {
+                                enumerable: true,
+                                get: () => this[propertyKey]
+                            });
+                        }
+                    }
+
+                    return values;
+                };
+            });
+        }
+
+        meta[name || propertyKey] = propertyKey;
+    };
+}
+
+export function inject(name?: string) {
+    return (target: any, propertyKey: string) => {
+        reflection.addDecorator(target, opts => {
+            let meta = opts.inject || ((opts.inject = {}) as object);
+            meta[propertyKey] = {
+                from: name || propertyKey
+            };
+        });
+    };
+}
 
 export function watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
@@ -77,7 +114,10 @@ export function watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
                 componentOptions.watch = {};
             }
 
-            componentOptions.watch[propName] = Object.assign({ handler: descriptor.value, watchOptions });
+            componentOptions.watch[propName] = Object.assign({
+                handler: descriptor.value,
+                watchOptions
+            });
         });
     };
 }
