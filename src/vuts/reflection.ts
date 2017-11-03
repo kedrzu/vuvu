@@ -19,12 +19,8 @@ export function addDecorator(target: any, callback: DecoratorCallback) {
 }
 
 export function getDecorators(target: any): DecoratorCallback[] {
-
-    let decorators: DecoratorCallback[] = [];
-
     let proto = target.prototype;
-
-    return proto[decoratorsSymbol] || [];
+    return proto.hasOwnProperty(decoratorsSymbol) ? proto[decoratorsSymbol] : [];
 }
 
 export function addLifecycleHook(target: any, hook: string, callback: LifecycleHook) {

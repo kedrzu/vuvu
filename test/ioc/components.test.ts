@@ -6,18 +6,13 @@ import * as ioc from 'vuvu/ioc';
 Vue.use(ioc.IocPlugin);
 
 describe('vue components service injection', () => {
-
     it('injects services into props', () => {
         @ioc.injectable()
-        class Foo {
-
-        }
+        class Foo {}
 
         @vuvu.component()
         class Component extends Vue {
-
-            @ioc.inject()
-            public foo: Foo;
+            @ioc.inject() public foo: Foo;
 
             public boo = 'asd';
         }
@@ -35,16 +30,11 @@ describe('vue components service injection', () => {
     });
 
     it('register attribute as dependency provider', () => {
-
-        class Foo {
-
-        }
+        class Foo {}
 
         @vuvu.component()
         class Component extends Vue {
-
-            @ioc.provide()
-            public foo: Foo = new Foo();
+            @ioc.provide() public foo: Foo = new Foo();
         }
 
         let container = new ioc.Container();
@@ -60,14 +50,10 @@ describe('vue components service injection', () => {
     });
 
     it('register property as dependency provider', () => {
-
-        class Foo {
-
-        }
+        class Foo {}
 
         @vuvu.component()
         class Component extends Vue {
-
             private fooz = new Foo();
 
             @ioc.provide()
@@ -89,14 +75,10 @@ describe('vue components service injection', () => {
     });
 
     it('register method as dependency provider', () => {
-
-        class Foo {
-
-        }
+        class Foo {}
 
         @vuvu.component()
         class Component extends Vue {
-
             private fooz = new Foo();
 
             @ioc.provide()
@@ -118,32 +100,29 @@ describe('vue components service injection', () => {
     });
 
     it('dependencies are visible in child components', () => {
-
-        class Foo { }
+        class Foo {}
 
         @ioc.injectable()
-        class Bar { }
+        class Bar {}
 
         @vuvu.component()
         class Parent extends Vue {
-
-            @ioc.provide()
-            public foo: Foo = new Foo();
+            @ioc.provide() public foo: Foo = new Foo();
         }
 
         @vuvu.component()
         class Child extends Vue {
+            @ioc.inject() public foo: Foo;
 
-            @ioc.inject()
-            public foo: Foo;
-
-            @ioc.inject()
-            public bar: Bar;
+            @ioc.inject() public bar: Bar;
         }
 
         let container = new ioc.Container();
 
-        container.bind(Bar).toSelf().inSingletonScope();
+        container
+            .bind(Bar)
+            .toSelf()
+            .inSingletonScope();
 
         let parent = new Parent({
             container: container
@@ -157,31 +136,32 @@ describe('vue components service injection', () => {
         expect(child.$container).toBe(parent.$container, 'should inherit container');
 
         expect(child.foo).toBe(parent.foo, 'should inject dependency from parent into child');
-        expect(child.bar).toBe(container.get(Bar), 'should inject dependency from main continer into child');
+        expect(child.bar).toBe(
+            container.get(Bar),
+            'should inject dependency from main continer into child'
+        );
     });
 
     it('injects dependencies into inherited components', () => {
-
         @ioc.injectable()
-        class Foo { }
+        class Foo {}
 
         @vuvu.component()
         class Base extends Vue {
-
-            @ioc.inject()
-            public foo: Foo;
+            @ioc.inject() public foo: Foo;
         }
 
         @vuvu.component()
         class Inherited extends Base {
-
-            @ioc.inject()
-            public fooz: Foo;
+            @ioc.inject() public fooz: Foo;
         }
 
         let container = new ioc.Container();
 
-        container.bind(Foo).toSelf().inSingletonScope();
+        container
+            .bind(Foo)
+            .toSelf()
+            .inSingletonScope();
 
         let cmp = new Inherited({
             container: container
@@ -191,4 +171,40 @@ describe('vue components service injection', () => {
         expect(cmp.fooz).toBe(container.get(Foo), 'should inject own prop');
     });
 
+    it('injects optional dependencies into props', () => {
+        class Foo {}
+
+        @vuvu.component()
+        class Component extends Vue {
+            @ioc.injectOptional() public foo: Foo;
+        }
+
+        let container = new ioc.Container();
+
+        container.bind(Foo).toConstantValue(new Foo());
+
+        let cmp = new Component({
+            container: container
+        });
+
+        expect(cmp.foo).toBeDefined();
+        expect(cmp.foo instanceof Foo).toBe(true);
+    });
+
+    it('not injects unavailable optional dependencies into props', () => {
+        class Foo {}
+
+        @vuvu.component()
+        class Component extends Vue {
+            @ioc.injectOptional() public foo: Foo;
+        }
+
+        let container = new ioc.Container();
+
+        let cmp = new Component({
+            container: container
+        });
+
+        expect(cmp.foo).toBeNull();
+    });
 });

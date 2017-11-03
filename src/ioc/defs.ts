@@ -8,11 +8,19 @@ declare module 'vue/types/vue' {
     }
 }
 
-declare module 'vue/types/options' {
+export interface InjectConfig {
+    identifier: interfaces.ServiceIdentifier<any>;
+    optional?: boolean;
+}
 
+export interface ProvideConfig {
+    identifier: interfaces.ServiceIdentifier<any>;
+}
+
+declare module 'vue/types/options' {
     interface ComponentOptions<V extends Vue> {
         container?: Container;
-        iocProvide?: { [prop: string]: interfaces.ServiceIdentifier<any> };
-        iocInject?: { [prop: string]: interfaces.ServiceIdentifier<any> };
+        iocProvide?: { [prop: string]: ProvideConfig };
+        iocInject?: { [prop: string]: InjectConfig };
     }
 }

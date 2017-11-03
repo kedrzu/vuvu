@@ -5,14 +5,21 @@ declare module 'vue/types/vue' {
         readonly $container: Container;
     }
 }
+export interface InjectConfig {
+    identifier: interfaces.ServiceIdentifier<any>;
+    optional?: boolean;
+}
+export interface ProvideConfig {
+    identifier: interfaces.ServiceIdentifier<any>;
+}
 declare module 'vue/types/options' {
     interface ComponentOptions<V extends Vue> {
         container?: Container;
         iocProvide?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
+            [prop: string]: ProvideConfig;
         };
         iocInject?: {
-            [prop: string]: interfaces.ServiceIdentifier<any>;
+            [prop: string]: InjectConfig;
         };
     }
 }

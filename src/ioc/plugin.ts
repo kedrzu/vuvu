@@ -7,7 +7,7 @@ export function IocPlugin(vue: typeof Vue) {
     Object.defineProperty(vue.prototype, '$container', {
         get() {
             return this[containerSymbol];
-        },
+        }
     });
 
     // allows to use custom component options
@@ -15,9 +15,7 @@ export function IocPlugin(vue: typeof Vue) {
     vue.config.optionMergeStrategies.iocProvide = iocOptionMerge;
 
     vue.mixin({
-
         created(this: Vue) {
-
             // takes container that is specified in options or inherits it from parent
             let container = this.$options.container || (this.$parent && this.$parent.$container);
             if (!container) {
@@ -37,20 +35,22 @@ export function IocPlugin(vue: typeof Vue) {
             let injects = this.$options.iocInject;
             if (injects) {
                 for (let prop of Object.keys(injects)) {
-                    let identifier = injects[prop];
+                    let injectConfig = injects[prop];
 
-                    this[prop] = container.get(identifier);
+                    if (!injectConfig.optional || container.isBound(injectConfig.identifier)) {
+                        this[prop] = container.get(injectConfig.identifier);
+                    }
                 }
             }
 
             // configure provided values
             if (provides) {
                 for (let prop of Object.keys(provides)) {
-                    let identifier = provides[prop];
+                    let provideConfig = provides[prop];
 
                     // provided value will be resolved at runtime with
                     // object property or function call
-                    container.bind(identifier).toDynamicValue(() => {
+                    container.bind(provideConfig.identifier).toDynamicValue(() => {
                         let value = this[prop];
                         return typeof value === 'function' ? value.call(this) : value;
                     });
