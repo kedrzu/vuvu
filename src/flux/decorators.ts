@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 
+import { addMutation } from './reflection';
 import { Store } from './store';
 
 export function mutation(mutationName?: string) {
@@ -7,11 +8,9 @@ export function mutation(mutationName?: string) {
         let fcn = descriptor.value;
         let name = mutationName || propertyKey;
 
-        Reflect.defineMetadata('foo', fcn, target);
-        Reflect.defineMetadata('fooz', fcn, target, propertyKey);
-        target['foo'] = fcn;
+        addMutation(target, name, fcn);
 
-        descriptor.value = function<T>(this: Store<T>, payload: any) {
+        descriptor.value = function <T>(this: Store<T>, payload: any) {
             let path = `${this.id}/${name}`;
             this.root.commit(path, payload);
         };

@@ -12,7 +12,16 @@ export function addMutation<T extends Store<any>>(
     name: string,
     fcn: vuex.Mutation<any>
 ) {
-    let mutations: Mutations = storeClass[mutationsSymbol] || (storeClass[mutationsSymbol] = {});
+    let mutations: Mutations = storeClass[mutationsSymbol];
+
+    if (!mutations) {
+        // there are no mutations defined
+        storeClass[mutationsSymbol] = mutations = {};
+    } else if (!storeClass.hasOwnProperty(mutationsSymbol)) {
+        // mutations have been defined in base class
+        // we need to copy them, to preserve inheritance hierachy
+        storeClass[mutationsSymbol] = mutations = Object.assign({}, mutations);
+    }
 
     mutations[name] = fcn;
 }

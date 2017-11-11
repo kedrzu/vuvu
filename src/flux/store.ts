@@ -3,6 +3,7 @@ import * as vuex from 'vuex';
 import * as types from 'vuvu/types';
 
 import Flux from './plugin';
+import { getMutations } from './reflection';
 
 export interface StoreOptions<TState extends {}> {
     name?: string;
@@ -22,10 +23,6 @@ export class Store<TState extends {}> {
     constructor(options: StoreOptions<TState>) {
         this.root = options.store || Flux.store;
 
-        var reflect = Reflect;
-        var meta = Reflect.getMetadata('foo', this, 'increment');
-        var keys = Reflect.getMetadataKeys(this, 'increment');
-
         if (!this.root) {
             throw new Error(
                 'Flux plugin is not initialized. Call Vue.use(Flux) before creating store or provide your own store.'
@@ -35,10 +32,21 @@ export class Store<TState extends {}> {
         this.name = options.name;
         this.id = getUniqueName(options.name);
 
-        this.root.registerModule(this.id, {
+        let mutations = getMutations(Object.getPrototypeOf(this));
+        let opts: vuex.Module<TState, any> = {
+            mutations: {},
             namespaced: true,
-            state: options.state
-        });
+            state: options.state,
+        };
+
+        for (let key of Object.keys(mutations)) {
+            let mutation = mutations[key];
+            opts.mutations[key] = (state, payload) => {
+                mutation.call(this, payload);
+            };
+        }
+
+        this.root.registerModule(this.id, opts);
 
         modules[this.id] = this;
     }
