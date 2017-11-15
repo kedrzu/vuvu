@@ -8,7 +8,6 @@ import * as common from '../common';
 Vue.use(Flux);
 
 describe('Flux store', () => {
-
     common.initTest();
 
     it('instance store gives access to Vuex store module', () => {
@@ -30,7 +29,7 @@ describe('Flux store', () => {
     });
 
     it('different stores of the same name do not share state', () => {
-        let store = new vuex.Store<any>({ strict: true  });
+        let store = new vuex.Store<any>({ strict: true });
 
         interface Foo {
             foo: number;

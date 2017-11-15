@@ -20,6 +20,10 @@ export class Store<TState extends {}> {
         return this.root.state[this.id];
     }
 
+    public set state(value: TState) {
+        this.root.state[this.id] = value;
+    }
+
     constructor(options: StoreOptions<TState>) {
         this.root = options.store || Flux.store;
 
@@ -36,7 +40,7 @@ export class Store<TState extends {}> {
         let opts: vuex.Module<TState, any> = {
             mutations: {},
             namespaced: true,
-            state: options.state,
+            state: options.state
         };
 
         for (let key of Object.keys(mutations)) {
