@@ -1,6 +1,6 @@
 {
     "name": "vuvu",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "",
     "main": "index.js",
     "typings": "index.d.ts",
@@ -23,6 +23,7 @@
     },
     "homepage": "https://github.com/kedrzu/vuvu#readme",
     "dependencies": {
+        "axios": "^0.17.1",
         "inversify": "^4.3.0",
         "reflect-metadata": "^0.1.10",
         "vue": "^2.5.2",

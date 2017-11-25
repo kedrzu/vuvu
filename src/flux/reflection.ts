@@ -1,13 +1,13 @@
 import * as vuex from 'vuex';
 import * as types from 'vuvu/types';
 
-import { Store } from './store';
+import { StoreModule } from './StoreModule';
 
 const mutationsSymbol = Symbol('vuvu:flux-mutations');
 
 export type Mutations = types.Dictionary<vuex.Mutation<any>>;
 
-export function addMutation<T extends Store<any>>(
+export function addMutation<T extends StoreModule<any>>(
     storeClass: types.Constructor<T>,
     name: string,
     fcn: vuex.Mutation<any>
@@ -26,6 +26,7 @@ export function addMutation<T extends Store<any>>(
     mutations[name] = fcn;
 }
 
-export function getMutations<T extends Store<any>>(storeClass: types.Constructor<T>): Mutations {
-    return storeClass[mutationsSymbol] || {};
+export function getMutationsForStore<T extends StoreModule<any>>(store: T): Mutations {
+    let proto = Object.getPrototypeOf(store);
+    return proto[mutationsSymbol] || {};
 }

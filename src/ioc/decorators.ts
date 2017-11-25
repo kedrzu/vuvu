@@ -34,7 +34,8 @@ function injectCore(
     if (target instanceof Vue) {
         // setup ioc configuration for this component
         reflection.addDecorator(target, componentOptions => {
-            let injectOptions = componentOptions.iocInject || (componentOptions.iocInject = {});
+            let injectOptions =
+                componentOptions.iocInject || (componentOptions.iocInject = {});
 
             injectOptions[propertyKey] = {
                 identifier: identifier,
@@ -67,5 +68,11 @@ export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
                 identifier: identifier
             };
         });
+    };
+}
+
+export function register() {
+    return <T>(constructor: T) => {
+        return constructor;
     };
 }
