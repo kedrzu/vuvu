@@ -1,6 +1,8 @@
 import * as axios from 'axios';
+import * as ioc from 'vuvu/ioc';
 import * as types from 'vuvu/types';
 
+@ioc.injectable()
 export class HttpClient {
     constructor(path?: string) {
         this.path = path || '';
@@ -15,6 +17,7 @@ export class HttpClient {
     public readonly headers: types.Dictionary<string | number> = {};
 
     public get<T>(path: string, config?: axios.AxiosRequestConfig): Promise<T> {
+        config = config || {};
         config.method = 'GET';
         config.url = path;
 
@@ -22,6 +25,7 @@ export class HttpClient {
     }
 
     public post<T>(path: string, config?: axios.AxiosRequestConfig): Promise<T> {
+        config = config || {};
         config.method = 'POST';
         config.url = path;
 

@@ -4,4 +4,3 @@ export default Flux;
 export * from './StoreModule';
 export * from './StoreBuilder';
 export * from './decorators';
-export * from './module';
