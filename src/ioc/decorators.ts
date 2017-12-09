@@ -54,7 +54,7 @@ function injectCore(
 }
 
 export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
-    return <T>(target: any, propertyKey: string) => {
+    return <T>(target: any, propertyKey: string, descriptor?: PropertyDescriptor) => {
         identifier =
             identifier ||
             Reflect.getMetadata('design:returntype', target, propertyKey) ||
@@ -68,6 +68,11 @@ export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
                 identifier: identifier
             };
         });
+
+        // if it's basic attribute, set this to be reactive
+        if (!descriptor) {
+            decorators.data()(target, propertyKey);
+        }
     };
 }
 
