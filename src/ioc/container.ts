@@ -4,14 +4,14 @@ export class Container extends InversifyContainer {
     constructor() {
         super();
 
-        this.bind(Container).toConstantValue(this);
+        this.bind(Container).toDynamicValue(ctx => ctx.container as Container);
     }
 
     public /* override */ createChild() {
-        let child = super.createChild();
-
-        child.bind(Container).toConstantValue(child);
-
+        // we override this method to preserve proper
+        // container type across all casesS
+        let child = new Container();
+        child.parent = this;
         return child;
     }
 }

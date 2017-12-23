@@ -20,4 +20,15 @@ describe('IoC container', () => {
         expect(container).not.toBe(child);
         expect(child).toBe(self);
     });
+
+    it('injecting container from grandchild gives the same instance', () => {
+        let container = new ioc.Container();
+        let child = container.createChild();
+        let grandchild = child.createChild();
+        let self = grandchild.get(ioc.Container);
+
+        expect(container).not.toBe(child);
+        expect(container).not.toBe(grandchild);
+        expect(grandchild).toBe(self);
+    });
 });
