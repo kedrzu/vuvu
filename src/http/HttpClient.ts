@@ -16,18 +16,14 @@ export class HttpClient {
     public readonly path: string;
     public readonly headers: types.Dictionary<string | number> = {};
 
-    public get<T>(path: string, config?: axios.AxiosRequestConfig): Promise<T> {
-        config = config || {};
+    public get<T>(config?: axios.AxiosRequestConfig): Promise<T> {
         config.method = 'GET';
-        config.url = path;
 
         return this.request<T>(config);
     }
 
-    public post<T>(path: string, config?: axios.AxiosRequestConfig): Promise<T> {
-        config = config || {};
+    public post<T>(config: axios.AxiosRequestConfig): Promise<T> {
         config.method = 'POST';
-        config.url = path;
 
         return this.request<T>(config);
     }
