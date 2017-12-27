@@ -1,6 +1,6 @@
 {
     "name": "vuvu",
-    "version": "0.3.9",
+    "version": "0.4.0",
     "description": "",
     "main": "index.js",
     "typings": "index.d.ts",
@@ -24,31 +24,31 @@
     "homepage": "https://github.com/kedrzu/vuvu#readme",
     "dependencies": {
         "axios": "^0.17.1",
-        "inversify": "^4.3.0",
+        "inversify": "^4.9.0",
         "reflect-metadata": "^0.1.10",
-        "vue": "^2.5.2",
+        "vue": "^2.5.13",
         "vuex": "^3.0.1"
     },
     "devDependencies": {
-        "@types/jasmine": "^2.6.0",
-        "@types/node": "^8.0.46",
-        "webpack": "^3.8.1",
-        "awesome-typescript-loader": "^3.2.3",
+        "@types/jasmine": "^2.8.2",
+        "@types/node": "^8.5.2",
+        "awesome-typescript-loader": "^3.4.1",
         "copyfiles": "^1.2.0",
         "jasmine-core": "^2.8.0",
         "karma": "^1.7.1",
         "karma-chrome-launcher": "^2.2.0",
         "karma-html-detailed-reporter": "^1.1.21",
-        "karma-jasmine": "^1.1.0",
+        "karma-jasmine": "^1.1.1",
         "karma-jasmine-html-reporter": "^0.2.2",
         "karma-sourcemap-loader": "^0.3.7",
-        "karma-typescript": "^3.0.8",
-        "karma-webpack": "^2.0.5",
+        "karma-typescript": "^3.0.9",
+        "karma-webpack": "^2.0.9",
         "rimraf": "^2.6.2",
-        "ts-loader": "^3.0.3",
-        "tslint": "^5.7.0",
-        "typescript": "^2.5.3",
-        "vue-loader": "^13.3.0",
-        "vue-template-compiler": "^2.5.2"
+        "ts-loader": "^3.2.0",
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.2",
+        "vue-loader": "^13.6.1",
+        "vue-template-compiler": "^2.5.13",
+        "webpack": "^3.10.0"
     }
 }

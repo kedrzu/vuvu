@@ -10,4 +10,9 @@
             "wrap_attributes_indent_size": 40
         }
     },
+    "files.exclude": {
+        "**/.git": true,
+        "node_modules/**": true,
+        "lib/**": true
+    },
 }

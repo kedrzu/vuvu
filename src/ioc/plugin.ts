@@ -10,14 +10,32 @@ export function IocPlugin(vue: typeof Vue) {
         }
     });
 
+    vue.directive('ioc-container', {});
+
     // allows to use custom component options
     vue.config.optionMergeStrategies.iocInject = iocOptionMerge;
     vue.config.optionMergeStrategies.iocProvide = iocOptionMerge;
 
     vue.mixin({
         created(this: Vue) {
-            // takes container that is specified in options or inherits it from parent
-            let container = this.$options.container || (this.$parent && this.$parent.$container);
+            // takes container that is specified in options
+            let container = this.$options.container;
+
+            // try get container provided by directive
+            if (!container && this.$vnode) {
+                let directive = this.$vnode.data.directives.find(
+                    d => d.name === 'ioc-container'
+                );
+
+                container = directive && directive.value;
+            }
+
+            // try get container from parent
+            if (!container) {
+                container = this.$parent && this.$parent.$container;
+            }
+
+            // no container found - nothing to do here
             if (!container) {
                 return;
             }
@@ -37,7 +55,10 @@ export function IocPlugin(vue: typeof Vue) {
                 for (let prop of Object.keys(injects)) {
                     let injectConfig = injects[prop];
 
-                    if (!injectConfig.optional || container.isBound(injectConfig.identifier)) {
+                    if (
+                        !injectConfig.optional ||
+                        container.isBound(injectConfig.identifier)
+                    ) {
                         this[prop] = container.get(injectConfig.identifier);
                     }
                 }

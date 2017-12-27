@@ -4,8 +4,21 @@ import * as cmp from './component';
 import * as defs from './defs';
 import * as reflection from './reflection';
 
-export function component(id?: string, options?: defs.ComponentOptions) {
+export function component();
+export function component(options: defs.ComponentOptions): any;
+export function component(id: string, options?: defs.ComponentOptions): any;
+export function component(
+    idOrOptions?: string | defs.ComponentOptions,
+    options?: defs.ComponentOptions
+): any {
     return <T>(constructor: T) => {
+        let id: string = null;
+        if (idOrOptions instanceof String) {
+            id = idOrOptions;
+        } else {
+            options = idOrOptions;
+        }
+
         let c = cmp.setupComponent(constructor as any, options);
 
         if (id) {
