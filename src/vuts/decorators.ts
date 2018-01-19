@@ -13,7 +13,7 @@ export function component(
 ): any {
     return <T>(constructor: T) => {
         let id: string = null;
-        if (idOrOptions instanceof String) {
+        if (typeof idOrOptions === 'string') {
             id = idOrOptions;
         } else {
             options = idOrOptions;

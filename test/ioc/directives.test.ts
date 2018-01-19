@@ -8,7 +8,7 @@ import './components/ParentComponentWithDirective.vue';
 Vue.use(ioc.IocPlugin);
 
 describe('IoC directives', () => {
-    it('using ioc-directive allows to override container', () => {
+    it('using ioc-directive allows to override container', async () => {
         let container = new ioc.Container();
         let component = new Component({
             container: container
@@ -16,9 +16,9 @@ describe('IoC directives', () => {
 
         component.$mount();
 
-        expect(component.$children.length).toBe(1);
-        expect(component.$children[0].$container).not.toBeNull();
-        expect(component.$children[0].$container).not.toBe(container);
+        expect(component.$children.length).toBe(3);
         expect(component.$children[0].$container).toBe(component.container);
+        expect(component.$children[1].$container).toBe(component.$container);
+        expect(component.$children[2].$container).toBe(component.$container);
     });
 });

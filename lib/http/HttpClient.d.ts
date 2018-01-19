@@ -4,7 +4,9 @@ export declare class HttpClient {
     constructor(path?: string);
     readonly path: string;
     readonly headers: types.Dictionary<string | number>;
-    get<T>(config?: axios.AxiosRequestConfig): Promise<T>;
-    post<T>(config: axios.AxiosRequestConfig): Promise<T>;
-    request<T>(config: axios.AxiosRequestConfig): Promise<T>;
+    get<T = any>(config?: axios.AxiosRequestConfig): Promise<T>;
+    post<T = any>(config: axios.AxiosRequestConfig): Promise<T>;
+    put<T = any>(config: axios.AxiosRequestConfig): Promise<T>;
+    delete<T = any>(config: axios.AxiosRequestConfig): Promise<T>;
+    request<T = any>(config: axios.AxiosRequestConfig): Promise<T>;
 }

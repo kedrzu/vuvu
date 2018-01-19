@@ -22,7 +22,7 @@ export function IocPlugin(vue: typeof Vue) {
             let container = this.$options.container;
 
             // try get container provided by directive
-            if (!container && this.$vnode) {
+            if (!container && this.$vnode && this.$vnode.data.directives) {
                 let directive = this.$vnode.data.directives.find(
                     d => d.name === 'ioc-container'
                 );

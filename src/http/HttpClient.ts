@@ -16,19 +16,31 @@ export class HttpClient {
     public readonly path: string;
     public readonly headers: types.Dictionary<string | number> = {};
 
-    public get<T>(config?: axios.AxiosRequestConfig): Promise<T> {
+    public get<T = any>(config?: axios.AxiosRequestConfig): Promise<T> {
         config.method = 'GET';
 
         return this.request<T>(config);
     }
 
-    public post<T>(config: axios.AxiosRequestConfig): Promise<T> {
+    public post<T = any>(config: axios.AxiosRequestConfig): Promise<T> {
         config.method = 'POST';
 
         return this.request<T>(config);
     }
 
-    public async request<T>(config: axios.AxiosRequestConfig): Promise<T> {
+    public put<T = any>(config: axios.AxiosRequestConfig): Promise<T> {
+        config.method = 'PUT';
+
+        return this.request<T>(config);
+    }
+
+    public delete<T = any>(config: axios.AxiosRequestConfig): Promise<T> {
+        config.method = 'DELETE';
+
+        return this.request<T>(config);
+    }
+
+    public async request<T = any>(config: axios.AxiosRequestConfig): Promise<T> {
         config.baseURL = this.path;
         config.headers = Object.assign({}, this.headers, config.headers);
 
