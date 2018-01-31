@@ -2,12 +2,12 @@ import * as ioc from 'vuvu/ioc';
 
 describe('IoC populate object', () => {
     it('injects service exported by symbol', () => {
-        @ioc.injectable()
+        @ioc.Injectable()
         class Foo {}
 
         let fooType = Symbol('foo');
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {
             @ioc.Inject(fooType) public prop: any;
         }
@@ -25,10 +25,10 @@ describe('IoC populate object', () => {
     });
 
     it('injects service exported by class', () => {
-        @ioc.injectable()
+        @ioc.Injectable()
         class Foo {}
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {
             @ioc.Inject() public prop: Foo;
         }
@@ -46,15 +46,15 @@ describe('IoC populate object', () => {
     });
 
     it('injects service when inherited', () => {
-        @ioc.injectable()
+        @ioc.Injectable()
         class Foo {}
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {
             @ioc.Inject() public prop: Foo;
         }
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Baz extends Bar {
             @ioc.Inject() public foo: Foo;
         }
@@ -77,7 +77,7 @@ describe('IoC populate object', () => {
     it('injects optional dependencies', () => {
         let symbol = Symbol('foo');
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {
             @ioc.Inject(symbol, { optional: true })
             public foo: string;
@@ -95,7 +95,7 @@ describe('IoC populate object', () => {
     it('not injects unavailable optional dependencies', () => {
         let symbol = Symbol('foo');
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {
             @ioc.Inject(symbol, { optional: true })
             public foo: string;

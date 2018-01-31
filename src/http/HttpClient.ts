@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as ioc from 'vuvu/ioc';
 import * as types from 'vuvu/types';
 
-@ioc.injectable()
+@ioc.Injectable()
 export class HttpClient {
     constructor(path?: string) {
         this.path = path || '';

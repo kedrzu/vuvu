@@ -7,7 +7,7 @@ Vue.use(ioc.IocPlugin);
 
 describe('vue components service injection', () => {
     it('injects services into props', () => {
-        @ioc.injectable()
+        @ioc.Injectable()
         class Foo {}
 
         @vuvu.Component()
@@ -102,7 +102,7 @@ describe('vue components service injection', () => {
     it('dependencies are visible in child components', () => {
         class Foo {}
 
-        @ioc.injectable()
+        @ioc.Injectable()
         class Bar {}
 
         @vuvu.Component()
@@ -143,7 +143,7 @@ describe('vue components service injection', () => {
     });
 
     it('injects dependencies into inherited components', () => {
-        @ioc.injectable()
+        @ioc.Injectable()
         class Foo {}
 
         @vuvu.Component()
