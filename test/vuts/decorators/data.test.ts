@@ -3,9 +3,9 @@ import * as vuvu from 'vuvu';
 
 describe('Component data decorator', () => {
     it('data is different accross components', () => {
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @vuvu.data() public foo: string;
+            @vuvu.Data() public foo: string;
         }
 
         let cmp1 = new Component();
@@ -19,9 +19,9 @@ describe('Component data decorator', () => {
     });
 
     it('allows setting default value with argument', () => {
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @vuvu.data(() => 'abc')
+            @vuvu.Data(() => 'abc')
             public foo: string;
         }
 

@@ -9,7 +9,7 @@ describe('IoC populate object', () => {
 
         @ioc.injectable()
         class Bar {
-            @ioc.inject(fooType) public prop: any;
+            @ioc.Inject(fooType) public prop: any;
         }
 
         let container = new ioc.Container();
@@ -30,7 +30,7 @@ describe('IoC populate object', () => {
 
         @ioc.injectable()
         class Bar {
-            @ioc.inject() public prop: Foo;
+            @ioc.Inject() public prop: Foo;
         }
 
         let container = new ioc.Container();
@@ -51,12 +51,12 @@ describe('IoC populate object', () => {
 
         @ioc.injectable()
         class Bar {
-            @ioc.inject() public prop: Foo;
+            @ioc.Inject() public prop: Foo;
         }
 
         @ioc.injectable()
         class Baz extends Bar {
-            @ioc.inject() public foo: Foo;
+            @ioc.Inject() public foo: Foo;
         }
 
         let container = new ioc.Container();
@@ -79,7 +79,8 @@ describe('IoC populate object', () => {
 
         @ioc.injectable()
         class Bar {
-            @ioc.injectOptional(symbol) public foo: string;
+            @ioc.Inject(symbol, { optional: true })
+            public foo: string;
         }
 
         let container = new ioc.Container();
@@ -96,7 +97,8 @@ describe('IoC populate object', () => {
 
         @ioc.injectable()
         class Bar {
-            @ioc.injectOptional(symbol) public foo: string;
+            @ioc.Inject(symbol, { optional: true })
+            public foo: string;
         }
 
         let container = new ioc.Container();

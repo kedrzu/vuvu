@@ -5,7 +5,7 @@ import * as ioc from 'vuvu/ioc';
 import ChildComponent from './ChildComponent';
 import './ChildComponent.vue';
 
-@vuvu.component({
+@vuvu.Component({
     components: {
         ChildComponent
     }

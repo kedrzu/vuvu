@@ -5,9 +5,9 @@ describe('Component lifecycle hooks decorators', () => {
     it('is run once', () => {
         let runs = 0;
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @vuvu.created
+            @vuvu.Created
             public foo() {
                 runs++;
             }
@@ -25,15 +25,15 @@ describe('Component lifecycle hooks decorators', () => {
     it('is run once when inherited', () => {
         let runs = 0;
 
-        @vuvu.component()
+        @vuvu.Component()
         class Base extends Vue {
-            @vuvu.created
+            @vuvu.Created
             public foo() {
                 runs++;
             }
         }
 
-        @vuvu.component()
+        @vuvu.Component()
         class Inherited extends Base {}
 
         let cmp = new Inherited();

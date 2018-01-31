@@ -10,9 +10,9 @@ describe('vue components service injection', () => {
         @ioc.injectable()
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @ioc.inject() public foo: Foo;
+            @ioc.Inject() public foo: Foo;
 
             public boo = 'asd';
         }
@@ -32,9 +32,9 @@ describe('vue components service injection', () => {
     it('register attribute as dependency provider', () => {
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @ioc.provide() public foo: Foo = new Foo();
+            @ioc.Provide() public foo: Foo = new Foo();
         }
 
         let container = new ioc.Container();
@@ -52,11 +52,11 @@ describe('vue components service injection', () => {
     it('register property as dependency provider', () => {
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
             private fooz = new Foo();
 
-            @ioc.provide()
+            @ioc.Provide()
             public get foo(): Foo {
                 return this.fooz;
             }
@@ -77,11 +77,11 @@ describe('vue components service injection', () => {
     it('register method as dependency provider', () => {
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
             private fooz = new Foo();
 
-            @ioc.provide()
+            @ioc.Provide()
             public foo(): Foo {
                 return this.fooz;
             }
@@ -105,16 +105,16 @@ describe('vue components service injection', () => {
         @ioc.injectable()
         class Bar {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Parent extends Vue {
-            @ioc.provide() public foo: Foo = new Foo();
+            @ioc.Provide() public foo: Foo = new Foo();
         }
 
-        @vuvu.component()
+        @vuvu.Component()
         class Child extends Vue {
-            @ioc.inject() public foo: Foo;
+            @ioc.Inject() public foo: Foo;
 
-            @ioc.inject() public bar: Bar;
+            @ioc.Inject() public bar: Bar;
         }
 
         let container = new ioc.Container();
@@ -146,14 +146,14 @@ describe('vue components service injection', () => {
         @ioc.injectable()
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Base extends Vue {
-            @ioc.inject() public foo: Foo;
+            @ioc.Inject() public foo: Foo;
         }
 
-        @vuvu.component()
+        @vuvu.Component()
         class Inherited extends Base {
-            @ioc.inject() public fooz: Foo;
+            @ioc.Inject() public fooz: Foo;
         }
 
         let container = new ioc.Container();
@@ -174,9 +174,10 @@ describe('vue components service injection', () => {
     it('injects optional dependencies into props', () => {
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @ioc.injectOptional() public foo: Foo;
+            @ioc.Inject({ optional: true })
+            public foo: Foo;
         }
 
         let container = new ioc.Container();
@@ -194,9 +195,10 @@ describe('vue components service injection', () => {
     it('not injects unavailable optional dependencies into props', () => {
         class Foo {}
 
-        @vuvu.component()
+        @vuvu.Component()
         class Component extends Vue {
-            @ioc.injectOptional() public foo: Foo;
+            @ioc.Inject({ optional: true })
+            public foo: Foo;
         }
 
         let container = new ioc.Container();
@@ -206,5 +208,26 @@ describe('vue components service injection', () => {
         });
 
         expect(cmp.foo).toBeNull();
+    });
+
+    it('injects optional dependencies into props', () => {
+        class Foo {}
+
+        @vuvu.Component()
+        class Component extends Vue {
+            @ioc.Inject({ optional: true })
+            public foo: Foo;
+        }
+
+        let container = new ioc.Container();
+
+        container.bind(Foo).toConstantValue(new Foo());
+
+        let cmp = new Component({
+            container: container
+        });
+
+        expect(cmp.foo).toBeDefined();
+        expect(cmp.foo instanceof Foo).toBe(true);
     });
 });

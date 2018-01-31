@@ -3,9 +3,7 @@ import * as vuvu from 'vuvu';
 
 import SimpleComponent from './SimpleComponent';
 
-@vuvu.component()
+@vuvu.Component()
 export default class DerivedComponent extends SimpleComponent {
-
-    @vuvu.prop()
-    public baz: string;
+    @vuvu.Prop() public baz: string;
 }

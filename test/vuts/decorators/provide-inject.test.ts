@@ -3,14 +3,14 @@ import * as vuvu from 'vuvu';
 
 describe('Component provide/inject decorators', () => {
     it('passes data from parent to child', () => {
-        @vuvu.component()
+        @vuvu.Component()
         class Parent extends Vue {
-            @vuvu.provide() public foo: string = 'abc';
+            @vuvu.Provide() public foo: string = 'abc';
         }
 
-        @vuvu.component()
+        @vuvu.Component()
         class Child extends Vue {
-            @vuvu.inject() public foo: string;
+            @vuvu.Inject() public foo: string;
         }
 
         let parent = new Parent();

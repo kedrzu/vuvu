@@ -1,6 +1,6 @@
 {
     "name": "vuvu",
-    "version": "0.4.4",
+    "version": "0.5.4",
     "description": "",
     "main": "index.js",
     "typings": "index.d.ts",
@@ -25,6 +25,7 @@
     "dependencies": {
         "axios": "^0.17.1",
         "inversify": "^4.9.0",
+        "lodash": "^4.17.4",
         "reflect-metadata": "^0.1.10",
         "vue": "^2.5.13",
         "vuex": "^3.0.1"

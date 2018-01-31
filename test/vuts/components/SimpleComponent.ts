@@ -1,9 +1,7 @@
 import Vue from 'vue';
 import * as vuvu from 'vuvu';
 
-@vuvu.component()
+@vuvu.Component()
 export default class SimpleComponent extends Vue {
-
-    @vuvu.prop()
-    public foobar: string;
+    @vuvu.Prop() public foobar: string;
 }

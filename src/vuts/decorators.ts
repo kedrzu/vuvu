@@ -4,10 +4,10 @@ import * as cmp from './component';
 import * as defs from './defs';
 import * as reflection from './reflection';
 
-export function component();
-export function component(options: defs.ComponentOptions): any;
-export function component(id: string, options?: defs.ComponentOptions): any;
-export function component(
+export function Component();
+export function Component(options: defs.ComponentOptions): any;
+export function Component(id: string, options?: defs.ComponentOptions): any;
+export function Component(
     idOrOptions?: string | defs.ComponentOptions,
     options?: defs.ComponentOptions
 ): any {
@@ -29,7 +29,7 @@ export function component(
     };
 }
 
-export function ref(refName?: string) {
+export function Ref(refName?: string) {
     return (target: any, propertyKey: string) => {
         reflection.addLifecycleHook(target, 'created', function() {
             Object.defineProperty(this, propertyKey, {
@@ -41,32 +41,41 @@ export function ref(refName?: string) {
     };
 }
 
-export function prop(options?: PropOptions) {
-    return (target: any, propertyKey: string) => {
-        reflection.addDecorator(target, opts => {
-            if (!opts.props) {
-                opts.props = {};
-            }
+const propSymbol = Symbol('vuts:prop');
 
-            opts.props[propertyKey] = options || {};
-        });
+export function Prop(options?: PropOptions) {
+    return (target: any, propertyKey: string) => {
+        let propMeta = getMeta(target, propSymbol) as any;
+        if (!propMeta) {
+            target[propSymbol] = propMeta = {};
+
+            reflection.addDecorator(target, opts => {
+                if (!opts.props) {
+                    opts.props = propMeta;
+                } else {
+                    Object.assign(opts.props, propMeta);
+                }
+            });
+        }
+
+        propMeta[propertyKey] = options || {};
     };
 }
 
 const dataSymbol = Symbol('vuts:data');
 
-export function data(defaultValue?: () => any) {
+export function Data(defaultValue?: () => any) {
     return (target: any, propertyKey: string) => {
-        let meta = target[dataSymbol] as object;
-        if (!meta) {
-            target[dataSymbol] = meta = {};
+        let dataMeta = getMeta(target, dataSymbol) as object;
+        if (!dataMeta) {
+            target[dataSymbol] = dataMeta = {};
 
             reflection.addDecorator(target, opts => {
                 opts.data = () => {
                     let values = {};
-                    for (let i in meta) {
-                        if (meta.hasOwnProperty(i)) {
-                            values[i] = meta[i]();
+                    for (let i in dataMeta) {
+                        if (dataMeta.hasOwnProperty(i)) {
+                            values[i] = dataMeta[i]();
                         }
                     }
 
@@ -75,15 +84,15 @@ export function data(defaultValue?: () => any) {
             });
         }
 
-        meta[propertyKey] = defaultValue || (() => null);
+        dataMeta[propertyKey] = defaultValue || (() => null);
     };
 }
 
 const provideSymbol = Symbol('vuts:provide');
 
-export function provide(name?: string) {
+export function Provide(name?: string) {
     return (target: any, propertyKey: string) => {
-        let meta = target[provideSymbol] as object;
+        let meta = getMeta(target, provideSymbol) as object;
         if (!meta) {
             target[provideSymbol] = meta = {};
 
@@ -109,7 +118,7 @@ export function provide(name?: string) {
     };
 }
 
-export function inject(name?: string) {
+export function Inject(name?: string) {
     return (target: any, propertyKey: string) => {
         reflection.addDecorator(target, opts => {
             let meta = opts.inject || ((opts.inject = {}) as object);
@@ -120,7 +129,7 @@ export function inject(name?: string) {
     };
 }
 
-export function watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
+export function Watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         reflection.addDecorator(target, componentOptions => {
             if (!componentOptions.watch) {
@@ -135,34 +144,38 @@ export function watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
     };
 }
 
-export function beforeCreate(target: any, propertyKey: string) {
+export function BeforeCreate(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'beforeCreate', target[propertyKey]);
 }
 
-export function created(target: any, propertyKey: string) {
+export function Created(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'created', target[propertyKey]);
 }
 
-export function beforeMount(target: any, propertyKey: string) {
+export function BeforeMount(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'beforeMount', target[propertyKey]);
 }
 
-export function mounted(target: any, propertyKey: string) {
+export function Mounted(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'mounted', target[propertyKey]);
 }
 
-export function beforeUpdate(target: any, propertyKey: string) {
+export function BeforeUpdate(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'beforeUpdate', target[propertyKey]);
 }
 
-export function updated(target: any, propertyKey: string) {
+export function Updated(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'updated', target[propertyKey]);
 }
 
-export function beforeDestroy(target: any, propertyKey: string) {
+export function BeforeDestroy(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'beforeDestroy', target[propertyKey]);
 }
 
-export function destroyed(target: any, propertyKey: string) {
+export function Destroyed(target: any, propertyKey: string) {
     reflection.addLifecycleHook(target, 'destroyed', target[propertyKey]);
+}
+
+function getMeta(target, symbol) {
+    return target.hasOwnProperty(symbol) ? (target[symbol] as object) : null;
 }

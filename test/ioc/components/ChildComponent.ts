@@ -1,5 +1,5 @@
 import Vue from 'vue';
 import * as vuvu from 'vuvu';
 
-@vuvu.component()
+@vuvu.Component()
 export default class ChildComponent extends Vue {}

@@ -1,9 +1,7 @@
-import {
-    Container,
-    inject as inversifyInject,
-    interfaces,
-    optional as inversifyOptional
-} from 'inversify';
+import { Container, interfaces } from 'inversify';
+import { inject as inversifyInject, optional as inversifyOptional } from 'inversify';
+import { isPlainObject } from 'lodash';
+
 import 'reflect-metadata';
 import Vue from 'vue';
 
@@ -11,49 +9,51 @@ import * as decorators from '../vuts/decorators';
 import * as reflection from '../vuts/reflection';
 import * as defs from './defs';
 
-export function inject(identifier?: interfaces.ServiceIdentifier<any>) {
-    return <T>(target: any, propertyKey: string) => {
-        injectCore(identifier, target, propertyKey);
-    };
+export interface InjectConfig {
+    optional?: boolean;
 }
 
-export function injectOptional(identifier?: interfaces.ServiceIdentifier<any>) {
-    return <T>(target: any, propertyKey: string) => {
-        injectCore(identifier, target, propertyKey, true);
-    };
-}
-
-function injectCore(
-    identifier: interfaces.ServiceIdentifier<any>,
-    target: any,
-    propertyKey: string,
-    optional?: boolean
+export function Inject(config?: InjectConfig);
+export function Inject<T>(identifier: interfaces.ServiceIdentifier<T>, config?: InjectConfig);
+export function Inject<T>(
+    identifierOrConfig?: interfaces.ServiceIdentifier<T> | InjectConfig,
+    config?: InjectConfig
 ) {
-    identifier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
+    let identifier = identifierOrConfig as interfaces.ServiceIdentifier<T>;
 
-    if (target instanceof Vue) {
-        // setup ioc configuration for this component
-        reflection.addDecorator(target, componentOptions => {
-            let injectOptions =
-                componentOptions.iocInject || (componentOptions.iocInject = {});
-
-            injectOptions[propertyKey] = {
-                identifier: identifier,
-                optional: optional
-            };
-        });
-
-        // also add this property to be reactive
-        decorators.data()(target, propertyKey);
-    } else {
-        inversifyInject(identifier)(target, propertyKey);
-        if (optional) {
-            inversifyOptional()(target, propertyKey);
-        }
+    if (isPlainObject(identifierOrConfig)) {
+        config = identifierOrConfig as InjectConfig;
+        identifier = null;
     }
+
+    return (target: any, propertyKey: string) => {
+        identifier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
+
+        let optional = config && config.optional;
+
+        if (target instanceof Vue) {
+            // setup ioc configuration for this component
+            reflection.addDecorator(target, componentOptions => {
+                let injectOptions = componentOptions.iocInject || (componentOptions.iocInject = {});
+
+                injectOptions[propertyKey] = {
+                    identifier: identifier,
+                    optional: optional
+                };
+            });
+
+            // also add this property to be reactive
+            decorators.Data()(target, propertyKey);
+        } else {
+            inversifyInject(identifier)(target, propertyKey);
+            if (optional) {
+                inversifyOptional()(target, propertyKey);
+            }
+        }
+    };
 }
 
-export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
+export function Provide(identifier?: interfaces.ServiceIdentifier<any>) {
     return <T>(target: any, propertyKey: string, descriptor?: PropertyDescriptor) => {
         identifier =
             identifier ||
@@ -71,13 +71,13 @@ export function provide(identifier?: interfaces.ServiceIdentifier<any>) {
 
         // if it's basic attribute, set this to be reactive
         if (!descriptor) {
-            decorators.data()(target, propertyKey);
+            decorators.Data()(target, propertyKey);
         }
     };
 }
 
-export function register() {
-    return <T>(constructor: T) => {
-        return constructor;
-    };
-}
+// export function Register() {
+//     return <T>(constructor: T) => {
+//         return constructor;
+//     };
+// }

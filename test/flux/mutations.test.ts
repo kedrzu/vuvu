@@ -16,12 +16,12 @@ describe('Flux store mutations', () => {
     }
 
     class Counter extends flux.StoreModule<Foo> {
-        @flux.mutation()
+        @flux.Mutation()
         public increment() {
             this.state.count++;
         }
 
-        @flux.mutation()
+        @flux.Mutation()
         public incrementBy(count: number) {
             this.state.count += count;
         }
@@ -71,7 +71,7 @@ describe('Flux store mutations', () => {
         });
 
         class ReversibleCounter extends Counter {
-            @flux.mutation()
+            @flux.Mutation()
             public decrement() {
                 this.state.count--;
             }
@@ -101,7 +101,7 @@ describe('Flux store mutations', () => {
         }
 
         class Foobar extends flux.StoreModule<State> {
-            @flux.mutation()
+            @flux.Mutation()
             public alterState(state: State) {
                 this.state = state;
             }
