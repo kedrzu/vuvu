@@ -1,6 +1,6 @@
 import { Container, interfaces } from 'inversify';
 import { inject as inversifyInject, optional as inversifyOptional } from 'inversify';
-import { isPlainObject } from 'lodash';
+import { isPlainObject, isString, isSymbol } from 'lodash';
 
 import 'reflect-metadata';
 import Vue from 'vue';
@@ -28,6 +28,8 @@ export function Inject<T>(
 
     return (target: any, propertyKey: string) => {
         identifier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
+
+        validateServiceIdentifier(identifier);
 
         let optional = config && config.optional;
 
@@ -76,8 +78,21 @@ export function Provide(identifier?: interfaces.ServiceIdentifier<any>) {
     };
 }
 
-// export function Register() {
-//     return <T>(constructor: T) => {
-//         return constructor;
-//     };
-// }
+function validateServiceIdentifier(identifier: interfaces.ServiceIdentifier<any>) {
+    // TODO: add if statement for webpack builds
+
+    // strings and symbols are valid
+    if (isString(identifier) || isSymbol(identifier)) {
+        return;
+    }
+
+    if (identifier == null) {
+        throw new Error('Identifier of injected service is not defined');
+    }
+
+    let prohibited = [Object, Number, Boolean, String];
+
+    if (prohibited.indexOf(identifier as any) >= 0) {
+        throw new Error(`Identifier of injected service '${identifier}' is not valid`);
+    }
+}
