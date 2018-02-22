@@ -1,5 +1,7 @@
 import * as typo from 'vuvu/typo';
 
+import Vue from 'vue';
+
 describe('Typo decorator', () => {
     it('registers type with specific name', () => {
         @typo.Type('myType')
@@ -67,7 +69,8 @@ describe('Typo decorator', () => {
         class MyType {
             public foo = 123;
 
-            @typo.JsonIgnore public bar = 234;
+            @typo.Property({ json: false })
+            public bar = 234;
         }
 
         let obj = new MyType();
@@ -98,5 +101,64 @@ describe('Typo decorator', () => {
         expect(resolved instanceof Baaz).toBe(true, 'not a proper type');
         expect(resolved.foo).toBe(123, 'property value is wrong');
         expect(resolved.bar).toBe(234, 'property value is wrong');
+    });
+
+    it('allows resolving concrete type from JSON when nested', () => {
+        @typo.Type('Bar')
+        class Bar {
+            @typo.Property() public foo: number;
+            @typo.Property() public bar: number;
+        }
+
+        @typo.Type('Foo')
+        class Foo {
+            @typo.Property() public foo: number;
+            @typo.Property() public bar: Bar;
+        }
+
+        let obj = new Foo();
+
+        obj.foo = 3;
+        obj.bar = new Bar();
+        obj.bar.bar = 123;
+        obj.bar.bar = 234;
+
+        let json = JSON.stringify(obj);
+        let plain = JSON.parse(json);
+        let resolved = typo.resolve(plain) as Foo;
+
+        expect(resolved).toBeDefined();
+        expect(resolved instanceof Foo).toBe(true, 'not a proper type');
+        expect(resolved.foo).toBe(3, 'property value is wrong');
+        expect(resolved.bar).toBeDefined('child object not defined');
+        expect(resolved.bar instanceof Bar).toBe(true, 'child object wrong type');
+        expect(resolved.bar.foo).toBe(123, 'property value is wrong');
+        expect(resolved.bar.bar).toBe(234, 'property value is wrong');
+    });
+
+    it('makes properties reactive', () => {
+        @typo.Type('Baaz')
+        class Baaz {
+            @typo.Property() public foo: number;
+            @typo.Property() public bar: number;
+
+            public get moo() {
+                return this.foo;
+            }
+            public set moo(val) {
+                this.foo = val;
+            }
+        }
+
+        let obj = new Baaz();
+        let vue = new Vue({
+            data: {
+                foo: null
+            }
+        });
+
+        vue.foo = obj;
+
+        debugger;
     });
 });

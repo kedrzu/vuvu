@@ -3,28 +3,21 @@ import { Constructor, Dictionary } from 'vuvu/types';
 export interface TypoDescriptor {
     name: string;
     constructor: Constructor<object>;
-    props: Dictionary<TypoPropDescriptor>;
+    props: Dictionary<TypoPropertyOptions>;
 }
 
-export interface TypoPropDescriptor {
-    ignoreJson?: boolean;
+export interface TypoPropertyOptions {
+    json?: boolean;
 }
 
 const typeSymbol = Symbol.for('vuvu:typo:type');
 const types: Dictionary<TypoDescriptor> = {};
 
 export function Type(name?: string) {
-    return <T extends object>(target: Constructor<T>) => {
-        let descriptor: TypoDescriptor = {
-            name: name,
-            constructor: target,
-            props: getAllPropsMeta(target.prototype) || {}
-        };
+    return <T extends { new (...args: any[]): {} }>(constructor: T) => {
+        let props = getAllPropsMeta(constructor.prototype) || {};
 
-        types[name] = descriptor;
-        target[typeSymbol] = descriptor;
-
-        target.prototype.toJSON = function() {
+        constructor.prototype.toJSON = function() {
             let obj = Object.assign({}, this);
 
             if (descriptor.name) {
@@ -33,7 +26,7 @@ export function Type(name?: string) {
 
             for (let key of Object.keys(obj)) {
                 let prop = descriptor.props[key];
-                if (prop && prop.ignoreJson) {
+                if (prop && prop.json === false) {
                     delete obj[key];
                 }
             }
@@ -41,33 +34,57 @@ export function Type(name?: string) {
             return obj;
         };
 
-        return target;
+        let propNames = Object.keys(props);
+
+        for (let prop of propNames) {
+            Object.defineProperty(constructor.prototype, prop, {
+                configurable: true,
+                enumerable: true,
+                writable: true
+            });
+        }
+
+        let extended = class extends constructor {
+            constructor(...args: any[]) {
+                super(...args);
+
+                for (let prop of propNames) {
+                    if (this[prop] === undefined) {
+                        this[prop] = null;
+                    }
+                }
+            }
+        };
+
+        let descriptor: TypoDescriptor = {
+            name: name,
+            constructor: extended,
+            props: props
+        };
+
+        types[name] = descriptor;
+        extended[typeSymbol] = descriptor;
+
+        return descriptor.constructor;
     };
 }
 
-export function JsonIgnore<T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) {
-    let propMeta = getPropMeta(target, propertyKey);
-    propMeta.ignoreJson = true;
-}
-
 const propsSymbol = Symbol.for('vuvu:typo:props');
-function getPropMeta(target: any, propertyKey: string): TypoPropDescriptor {
-    let targetMeta = getAllPropsMeta(target);
-    if (!targetMeta) {
-        targetMeta = {};
-        Reflect.defineMetadata(propsSymbol, targetMeta, target);
-    }
+export function Property(options?: TypoPropertyOptions) {
+    options = options || {};
+    return function<T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) {
+        let targetMeta = getAllPropsMeta(target);
+        if (!targetMeta) {
+            targetMeta = {};
+            Reflect.defineMetadata(propsSymbol, targetMeta, target);
+        }
 
-    let propMeta = targetMeta[propertyKey] as TypoPropDescriptor;
-    if (!propMeta) {
-        propMeta = targetMeta[propertyKey] = {};
-    }
-
-    return propMeta;
+        targetMeta[propertyKey] = options;
+    };
 }
 
 function getAllPropsMeta(target: any) {
-    return Reflect.getMetadata(propsSymbol, target) as Dictionary<TypoPropDescriptor>;
+    return Reflect.getMetadata(propsSymbol, target) as Dictionary<TypoPropertyOptions>;
 }
 
 export function getType(type: string): TypoDescriptor {
