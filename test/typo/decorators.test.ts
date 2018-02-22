@@ -145,10 +145,40 @@ describe('Typo decorator', () => {
 
         let obj = new MyType();
         let json = JSON.stringify(obj);
-        let value = JSON.parse(json);
+        let value = JSON.parse(json) as MyType;
 
         expect(value.foo).toBe(123);
         expect(value.bar).toBeUndefined();
+    });
+
+    it('allows ignoring attributes for inherited when turning into JSON', () => {
+        @typo.Type()
+        class MyBaseType {
+            public foo = 123;
+
+            @typo.Property({ json: false })
+            public bar = 234;
+        }
+
+        @typo.Type()
+        class MyDerivedType extends MyBaseType {
+            public fooz = 123;
+
+            @typo.Property({ json: false })
+            public baaz = 234;
+        }
+
+        let baseDescriptor = typo.getDescriptor(MyBaseType);
+        let derivedDescriptor = typo.getDescriptor(MyDerivedType);
+
+        let obj = new MyDerivedType();
+        let json = JSON.stringify(obj);
+        let value = JSON.parse(json) as MyDerivedType;
+
+        expect(value.foo).toBe(123);
+        expect(value.bar).toBeUndefined();
+        expect(value.fooz).toBe(123);
+        expect(value.baaz).toBeUndefined();
     });
 
     it('allows resolving concrete type from JSON', () => {

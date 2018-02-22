@@ -21,26 +21,10 @@ const types: Dictionary<TypoDescriptor> = {};
 
 export function Type(name?: string) {
     return <T extends { new (...args: any[]): {} }>(constructor: T) => {
-        let props = getAllPropsMeta(constructor.prototype) || {};
+        let ownProps = getOwnPropsMeta(constructor.prototype) || {};
+        let allProps = getAllPropsMeta(constructor.prototype) || {};
 
-        constructor.prototype.toJSON = function() {
-            let obj = Object.assign({}, this);
-
-            if (descriptor.name) {
-                obj.type = descriptor.name;
-            }
-
-            for (let key of Object.keys(obj)) {
-                let prop = descriptor.props[key];
-                if (prop && prop.json === false) {
-                    delete obj[key];
-                }
-            }
-
-            return obj;
-        };
-
-        let propNames = Object.keys(props);
+        let propNames = Object.keys(ownProps);
 
         // TODO: probably would be needed in future  (validation and so)
         for (let prop of propNames) {
@@ -54,7 +38,24 @@ export function Type(name?: string) {
         let descriptor: TypoDescriptor = {
             name: name,
             type: extendTypo(constructor, propNames),
-            props: props
+            props: ownProps
+        };
+
+        constructor.prototype.toJSON = function() {
+            let obj = Object.assign({}, this);
+
+            if (descriptor.name) {
+                obj.type = descriptor.name;
+            }
+
+            for (let key of Object.keys(obj)) {
+                let prop = allProps[key];
+                if (prop && prop.json === false) {
+                    delete obj[key];
+                }
+            }
+
+            return obj;
         };
 
         types[name] = descriptor;
@@ -82,7 +83,7 @@ const propsSymbol = Symbol.for('vuvu:typo:props');
 export function Property(options?: TypoPropertyOptions) {
     options = options || {};
     return function<T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) {
-        let targetMeta = getAllPropsMeta(target);
+        let targetMeta = getOwnPropsMeta(target);
         if (!targetMeta) {
             targetMeta = {};
             Reflect.defineMetadata(propsSymbol, targetMeta, target);
@@ -100,6 +101,16 @@ export function Property(options?: TypoPropertyOptions) {
 }
 
 function getAllPropsMeta(target: any) {
+    let meta = {};
+    while (target) {
+        Object.assign(meta, Reflect.getMetadata(propsSymbol, target));
+        target = Reflect.getPrototypeOf(target);
+    }
+
+    return meta;
+}
+
+function getOwnPropsMeta(target: any) {
     return Reflect.getOwnMetadata(propsSymbol, target) as Dictionary<TypoPropertyDescriptor>;
 }
 
