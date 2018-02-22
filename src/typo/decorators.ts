@@ -100,7 +100,7 @@ export function Property(options?: TypoPropertyOptions) {
 }
 
 function getAllPropsMeta(target: any) {
-    return Reflect.getMetadata(propsSymbol, target) as Dictionary<TypoPropertyDescriptor>;
+    return Reflect.getOwnMetadata(propsSymbol, target) as Dictionary<TypoPropertyDescriptor>;
 }
 
 export function getDescriptor(type: string | Constructor): TypoDescriptor {

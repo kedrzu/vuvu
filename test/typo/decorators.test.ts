@@ -28,6 +28,76 @@ describe('Typo decorator', () => {
         expect(typo.isTypo(NoTypodType)).toBe(false);
     });
 
+    it('defines properties for object', () => {
+        @typo.Type()
+        class MyType {
+            @typo.Property() public foo;
+
+            @typo.Property() public bar = 123;
+        }
+
+        let obj = new MyType();
+
+        expect(obj.foo).toBe(null);
+        expect(obj.bar).toBe(123);
+    });
+
+    it('defines properties for object when inherited', () => {
+        @typo.Type()
+        class MyBaseType {
+            @typo.Property() public foo;
+
+            @typo.Property() public bar = 123;
+        }
+
+        @typo.Type()
+        class MyFirstDerivedType extends MyBaseType {
+            @typo.Property() public foor;
+
+            @typo.Property() public baar = 123;
+        }
+
+        // we test with second derived type, to check if props are not leaking
+        // between these two derived types
+        // this could happen if there are no properly checked own properties inside
+        // and properties can leak through prototypical inheritance between classes
+        @typo.Type()
+        class MySecondDerivedType extends MyBaseType {
+            @typo.Property() public fooz;
+
+            @typo.Property() public baaz = 123;
+        }
+
+        let base = new MyBaseType();
+        let first = new MyFirstDerivedType();
+        let second = new MySecondDerivedType();
+
+        expect(typo.isTypo(MyBaseType)).toBe(true);
+        expect(typo.isTypo(MyFirstDerivedType)).toBe(true);
+        expect(typo.isTypo(MySecondDerivedType)).toBe(true);
+
+        expect(base.foo).toBe(null);
+        expect(base.bar).toBe(123);
+        expect((base as MyFirstDerivedType).foor).toBeUndefined();
+        expect((base as MyFirstDerivedType).baar).toBeUndefined();
+        expect((base as MySecondDerivedType).fooz).toBeUndefined();
+        expect((base as MySecondDerivedType).baaz).toBeUndefined();
+
+        expect(first.foo).toBe(null);
+        expect(first.bar).toBe(123);
+        expect(first.foor).toBe(null);
+        expect(first.baar).toBe(123);
+        expect((first as any).fooz).toBeUndefined();
+        expect((first as any).baaz).toBeUndefined();
+
+        expect(first.foo).toBe(null);
+        expect(first.bar).toBe(123);
+        expect(second.fooz).toBe(null);
+        expect(second.baaz).toBe(123);
+        expect((second as any).foor).toBeUndefined();
+        expect((second as any).baar).toBeUndefined();
+    });
+
     it('includes type property within JSON object', () => {
         @typo.Type('myType')
         class MyType {
