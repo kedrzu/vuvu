@@ -15,4 +15,4 @@ export declare function Type(name?: string): <T extends new (...args: any[]) => 
 export declare function Property(options?: TypoPropertyOptions): <T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) => void;
 export declare function getDescriptor(type: string | Constructor): TypoDescriptor;
 export declare function isTypo(constructor: Constructor): boolean;
-export declare function resolve(obj: any, type?: string | Constructor): any;
+export declare function resolve<T extends {} = {}>(obj: Partial<T>, type?: string | Constructor<T>): T;

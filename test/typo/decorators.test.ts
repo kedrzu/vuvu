@@ -95,7 +95,7 @@ describe('Typo decorator', () => {
 
         let json = JSON.stringify(obj);
         let plain = JSON.parse(json);
-        let resolved = typo.resolve(plain);
+        let resolved = typo.resolve<Baaz>(plain);
 
         expect(resolved).toBeDefined();
         expect(resolved instanceof Baaz).toBe(true, 'not a proper type');
@@ -175,5 +175,33 @@ describe('Typo decorator', () => {
 
         expect(vue.foo).toBe(123);
         expect(vue.bar).toBe(234);
+    });
+
+    it('throws error on unresolvable type - unknown type in object literal', () => {
+        expect(() => {
+            typo.resolve({ foo: 123, type: 'foo' });
+        }).toThrowError('Could not resolve type foo');
+    });
+
+    it('throws error on unresolvable type - missing type in object literal', () => {
+        expect(() => {
+            typo.resolve({ foo: 123 });
+        }).toThrowError('Could not resolve type --unknown--');
+    });
+
+    it('throws error on unresolvable type - unknown type given by string', () => {
+        expect(() => {
+            typo.resolve({ foo: 123 }, 'foo');
+        }).toThrowError('Could not resolve type foo');
+    });
+
+    it('throws error on unresolvable type - unknown type given by constructor', () => {
+        class Foo {
+            public foo: number;
+        }
+
+        expect(() => {
+            typo.resolve({ foo: 123 }, Foo);
+        }).toThrowError('Could not resolve type Foo');
     });
 });

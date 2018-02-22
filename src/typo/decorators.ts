@@ -115,14 +115,19 @@ export function isTypo(constructor: Constructor) {
     return constructor && constructor[typeSymbol] !== undefined;
 }
 
-export function resolve(obj: any, type?: string | Constructor): any {
-    type = type || obj.type;
-
-    if (!type) {
+export function resolve<T extends {} = {}>(obj: Partial<T>, type?: string | Constructor<T>): T {
+    if (!obj) {
         return null;
     }
 
+    type = type || (obj as any).type;
+
     let descriptor = getDescriptor(type);
+
+    if (!descriptor) {
+        throw new Error(`Could not resolve type ${getTypeName(type)}`);
+    }
+
     let result = new descriptor.type() as any;
 
     Object.assign(result, obj);
@@ -137,4 +142,16 @@ export function resolve(obj: any, type?: string | Constructor): any {
     }
 
     return result;
+}
+
+function getTypeName(type: any) {
+    if (!type) {
+        return '--unknown--';
+    }
+
+    if (isString(type)) {
+        return type;
+    }
+
+    return (type as Constructor).name || '--unknown--';
 }
