@@ -9,9 +9,9 @@ describe('Typo decorator', () => {
             public foo = 123;
         }
 
-        let type = typo.getType('myType');
+        let type = typo.getDescriptor('myType');
 
-        expect(type.constructor).toBe(MyType);
+        expect(type.type).toBe(MyType);
     });
 
     it('registers type without name', () => {
@@ -120,7 +120,7 @@ describe('Typo decorator', () => {
 
         obj.foo = 3;
         obj.bar = new Bar();
-        obj.bar.bar = 123;
+        obj.bar.foo = 123;
         obj.bar.bar = 234;
 
         let json = JSON.stringify(obj);
@@ -153,12 +153,27 @@ describe('Typo decorator', () => {
         let obj = new Baaz();
         let vue = new Vue({
             data: {
-                foo: null
+                baaz: null
+            },
+            computed: {
+                foo() {
+                    return this.baaz && this.baaz.foo;
+                },
+                bar() {
+                    return this.baaz && this.baaz.bar;
+                }
             }
         });
 
-        vue.foo = obj;
+        vue.baaz = obj;
 
-        debugger;
+        expect(vue.foo).toBeNull();
+        expect(vue.bar).toBeNull();
+
+        obj.foo = 123;
+        obj.bar = 234;
+
+        expect(vue.foo).toBe(123);
+        expect(vue.bar).toBe(234);
     });
 });
