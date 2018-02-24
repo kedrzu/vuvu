@@ -236,6 +236,13 @@ describe('Typo decorator', () => {
         expect(resolved.bar.bar).toBe(234, 'property value is wrong');
     });
 
+    it('resolves the same object literal when type is missing', () => {
+        let obj = { foo: 123 };
+        let resolved = typo.resolve(obj);
+
+        expect(resolved).toBe(obj);
+    });
+
     it('makes properties reactive', () => {
         @typo.Type('Baaz')
         class Baaz {
@@ -281,12 +288,6 @@ describe('Typo decorator', () => {
         expect(() => {
             typo.resolve({ foo: 123, type: 'foo' });
         }).toThrowError('Could not resolve type foo');
-    });
-
-    it('throws error on unresolvable type - missing type in object literal', () => {
-        expect(() => {
-            typo.resolve({ foo: 123 });
-        }).toThrowError('Could not resolve type --unknown--');
     });
 
     it('throws error on unresolvable type - unknown type given by string', () => {

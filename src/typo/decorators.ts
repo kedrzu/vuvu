@@ -133,10 +133,15 @@ export function resolve<T extends {} = {}>(obj: Partial<T>, type?: string | Cons
 
     type = type || (obj as any).type;
 
-    let descriptor = getDescriptor(type);
+    if (!type) {
+        return obj as T;
+    }
 
+    let descriptor = getDescriptor(type);
     if (!descriptor) {
-        throw new Error(`Could not resolve type ${getTypeName(type)}`);
+        throw Error(`Could not resolve type ${getTypeName(type)}`);
+    } else if (!descriptor) {
+        return obj as T;
     }
 
     let result = new descriptor.type() as any;
