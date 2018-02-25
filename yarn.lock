@@ -2586,6 +2586,10 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
+jsep@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/jsep/-/jsep-0.3.3.tgz#c6789d352f1ba37ee14062f44395837390beeccc"
+
 json-loader@^0.5.4:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.7.tgz#dca14a70235ff82f0ac9a3abeb60d337a365185d"
