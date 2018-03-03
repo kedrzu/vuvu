@@ -1,6 +1,6 @@
 {
     "name": "vuvu",
-    "version": "0.6.6",
+    "version": "0.6.7",
     "description": "",
     "main": "index.js",
     "typings": "index.d.ts",
@@ -10,7 +10,8 @@
         "build": "npm run build:tsc && npm run build:copy",
         "build:tsc": "npx tsc --project tsconfig.build.json",
         "build:copy": "npx copyfiles package.json lib",
-        "dist": "cd lib && npm publish"
+        "publish": "cd lib && npm publish",
+        "dist": "npm run build && npm run publish"
     },
     "repository": {
         "type": "git",

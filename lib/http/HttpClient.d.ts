@@ -1,8 +1,7 @@
 import * as axios from 'axios';
 import * as types from 'vuvu/types';
 export declare class HttpClient {
-    constructor(path?: string);
-    readonly path: string;
+    path: string;
     readonly headers: types.Dictionary<string | number>;
     get<T = any>(config?: axios.AxiosRequestConfig): Promise<T>;
     post<T = any>(config: axios.AxiosRequestConfig): Promise<T>;

@@ -4,16 +4,7 @@ import * as types from 'vuvu/types';
 
 @ioc.Injectable()
 export class HttpClient {
-    constructor(path?: string) {
-        this.path = path || '';
-
-        // remove trailing slash
-        if (this.path.endsWith('/')) {
-            this.path = this.path.substr(0, this.path.length - 1);
-        }
-    }
-
-    public readonly path: string;
+    public path: string;
     public readonly headers: types.Dictionary<string | number> = {};
 
     public get<T = any>(config?: axios.AxiosRequestConfig): Promise<T> {
