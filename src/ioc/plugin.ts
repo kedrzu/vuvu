@@ -47,18 +47,6 @@ export function IocPlugin(vue: typeof Vue) {
 
             this[containerSymbol] = container;
 
-            // inject values
-            let injects = this.$options.iocInject;
-            if (injects) {
-                for (let prop of Object.keys(injects)) {
-                    let injectConfig = injects[prop];
-
-                    if (!injectConfig.optional || container.isBound(injectConfig.identifier)) {
-                        this[prop] = container.get(injectConfig.identifier);
-                    }
-                }
-            }
-
             // configure provided values
             if (provides) {
                 for (let prop of Object.keys(provides)) {
@@ -70,7 +58,6 @@ export function IocPlugin(vue: typeof Vue) {
                             .bind(provideConfig.identifier)
                             .to(provideConfig.resolve)
                             .inSingletonScope();
-                        this[prop] = container.get(provideConfig.identifier);
                     } else {
                         // provided value will be resolved at runtime with
                         // object property or function call
@@ -78,6 +65,18 @@ export function IocPlugin(vue: typeof Vue) {
                             let value = this[prop];
                             return typeof value === 'function' ? value.call(this) : value;
                         });
+                    }
+                }
+            }
+
+            // inject values
+            let injects = this.$options.iocInject;
+            if (injects) {
+                for (let prop of Object.keys(injects)) {
+                    let injectConfig = injects[prop];
+
+                    if (!injectConfig.optional || container.isBound(injectConfig.identifier)) {
+                        this[prop] = container.get(injectConfig.identifier);
                     }
                 }
             }

@@ -273,4 +273,35 @@ describe('vue components service injection', () => {
         expect(child.foo).toBe(foo);
         expect(child.bar).toBe(parent.bar);
     });
+
+    it('provided dependencies can depend on each other', () => {
+        @ioc.Injectable()
+        class Foo {}
+
+        @ioc.Injectable()
+        class Bar {
+            @ioc.Inject() public foo: Foo;
+        }
+
+        @vuvu.Component()
+        class Component extends Vue {
+            @ioc.Provide({ resolve: true })
+            public bar: Bar;
+
+            @ioc.Provide({ resolve: true })
+            public foo: Foo;
+        }
+
+        let container = new ioc.Container();
+
+        let component = new Component({
+            container: container
+        });
+
+        expect(component.bar).toBeDefined();
+        expect(component.bar).toBe(component.$container.get(Bar));
+        expect(component.bar.foo).toBe(component.$container.get(Foo));
+        expect(component.foo).toBeDefined();
+        expect(component.foo).toBe(component.$container.get(Foo));
+    });
 });

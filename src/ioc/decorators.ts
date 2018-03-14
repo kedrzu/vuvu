@@ -41,13 +41,11 @@ export function Inject<T>(typeOrConfig?: interfaces.ServiceIdentifier<T> | Injec
 
         if (target instanceof Vue) {
             // setup ioc configuration for this component
-            reflection.addDecorator(target, componentOptions => {
-                let injectOptions = componentOptions.iocInject || (componentOptions.iocInject = {});
-
-                injectOptions[propertyKey] = {
+            reflection.addDecorator(target, options => {
+                setInjectOptions(options, propertyKey, {
                     identifier: identifier,
                     optional: optional
-                };
+                });
             });
 
             // also add this property to be reactive
@@ -89,12 +87,16 @@ export function Provide<T>(typeOrConfig?: interfaces.ServiceIdentifier<T> | Prov
 
         // setup ioc provide configuration for this component
         reflection.addDecorator(target, options => {
-            let provideOptions = options.iocProvide || (options.iocProvide = {});
-
-            provideOptions[propertyKey] = {
+            setProvideOptions(options, propertyKey, {
                 identifier: identifier,
                 resolve: resolve as types.Constructor<T>
-            };
+            });
+
+            if (resolve) {
+                setInjectOptions(options, propertyKey, {
+                    identifier: identifier
+                });
+            }
         });
 
         // if it's basic attribute, set this to be reactive
@@ -121,4 +123,14 @@ function validateServiceIdentifier(identifier: interfaces.ServiceIdentifier<any>
     if (prohibited.indexOf(identifier as any) >= 0) {
         throw new Error(`Identifier of injected service '${identifier}' is not valid`);
     }
+}
+
+function setInjectOptions(componentOptions: any, property: string, options: defs.InjectConfig) {
+    let injectOptions = componentOptions.iocInject || (componentOptions.iocInject = {});
+    injectOptions[property] = options;
+}
+
+function setProvideOptions(componentOptions: any, property: string, options: defs.ProvideConfig) {
+    let provideOptions = componentOptions.iocProvide || (componentOptions.iocProvide = {});
+    provideOptions[property] = options;
 }
