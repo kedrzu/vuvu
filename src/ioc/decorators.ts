@@ -5,33 +5,39 @@ import { isPlainObject, isString, isSymbol } from 'lodash';
 import 'reflect-metadata';
 import Vue from 'vue';
 
+import * as types from '../types';
 import * as decorators from '../vuts/decorators';
 import * as reflection from '../vuts/reflection';
 import * as defs from './defs';
 
-export interface InjectConfig {
+export interface InjectConfig<T> {
     optional?: boolean;
+    type?: interfaces.ServiceIdentifier<T>;
 }
 
-export function Inject(config?: InjectConfig);
-export function Inject<T>(identifier: interfaces.ServiceIdentifier<T>, config?: InjectConfig);
-export function Inject<T>(
-    identifierOrConfig?: interfaces.ServiceIdentifier<T> | InjectConfig,
-    config?: InjectConfig
-) {
-    let identifier = identifierOrConfig as interfaces.ServiceIdentifier<T>;
+export interface ProvideConfig<T> {
+    resolve?: boolean | types.Constructor<T>;
+    type?: interfaces.ServiceIdentifier<T>;
+}
 
-    if (isPlainObject(identifierOrConfig)) {
-        config = identifierOrConfig as InjectConfig;
-        identifier = null;
+export function Inject<T>(config?: InjectConfig<T>);
+export function Inject<T>(type: interfaces.ServiceIdentifier<T>);
+export function Inject<T>(typeOrConfig?: interfaces.ServiceIdentifier<T> | InjectConfig<T>) {
+    let optional = false;
+    let identifier: interfaces.ServiceIdentifier<T>;
+
+    if (isPlainObject(typeOrConfig)) {
+        let config = typeOrConfig as InjectConfig<T>;
+        optional = !!config.optional;
+        identifier = config.type;
+    } else {
+        identifier = typeOrConfig as interfaces.ServiceIdentifier<T>;
     }
 
     return (target: any, propertyKey: string) => {
         identifier = identifier || Reflect.getMetadata('design:type', target, propertyKey);
 
         validateServiceIdentifier(identifier);
-
-        let optional = config && config.optional;
 
         if (target instanceof Vue) {
             // setup ioc configuration for this component
@@ -55,19 +61,39 @@ export function Inject<T>(
     };
 }
 
-export function Provide(identifier?: interfaces.ServiceIdentifier<any>) {
-    return <T>(target: any, propertyKey: string, descriptor?: PropertyDescriptor) => {
+export function Provide<T>(config?: ProvideConfig<T>);
+export function Provide<T>(type: interfaces.ServiceIdentifier<T>);
+export function Provide<T>(typeOrConfig?: interfaces.ServiceIdentifier<T> | ProvideConfig<T>) {
+    let identifier: interfaces.ServiceIdentifier<T>;
+    let resolve: boolean | types.Constructor<T>;
+
+    if (isPlainObject(typeOrConfig)) {
+        let config = typeOrConfig as ProvideConfig<T>;
+        identifier = config.type;
+        resolve = config.resolve;
+    } else {
+        identifier = typeOrConfig as interfaces.ServiceIdentifier<T>;
+    }
+
+    return (target: any, propertyKey: string, descriptor?: PropertyDescriptor) => {
         identifier =
             identifier ||
             Reflect.getMetadata('design:returntype', target, propertyKey) ||
             Reflect.getMetadata('design:type', target, propertyKey);
+
+        if (resolve === true) {
+            resolve = identifier as types.Constructor;
+        } else if (resolve === false) {
+            resolve = null;
+        }
 
         // setup ioc provide configuration for this component
         reflection.addDecorator(target, options => {
             let provideOptions = options.iocProvide || (options.iocProvide = {});
 
             provideOptions[propertyKey] = {
-                identifier: identifier
+                identifier: identifier,
+                resolve: resolve as types.Constructor<T>
             };
         });
 

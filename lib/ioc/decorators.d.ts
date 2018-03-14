@@ -1,8 +1,15 @@
 import { interfaces } from 'inversify';
 import 'reflect-metadata';
-export interface InjectConfig {
+import * as types from '../types';
+export interface InjectConfig<T> {
     optional?: boolean;
+    type?: interfaces.ServiceIdentifier<T>;
 }
-export declare function Inject(config?: InjectConfig): any;
-export declare function Inject<T>(identifier: interfaces.ServiceIdentifier<T>, config?: InjectConfig): any;
-export declare function Provide(identifier?: interfaces.ServiceIdentifier<any>): <T>(target: any, propertyKey: string, descriptor?: PropertyDescriptor) => void;
+export interface ProvideConfig<T> {
+    resolve?: boolean | types.Constructor<T>;
+    type?: interfaces.ServiceIdentifier<T>;
+}
+export declare function Inject<T>(config?: InjectConfig<T>): any;
+export declare function Inject<T>(type: interfaces.ServiceIdentifier<T>): any;
+export declare function Provide<T>(config?: ProvideConfig<T>): any;
+export declare function Provide<T>(type: interfaces.ServiceIdentifier<T>): any;

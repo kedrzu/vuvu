@@ -1,5 +1,6 @@
 import { Container, interfaces } from 'inversify';
 import Vue from 'vue';
+import * as types from 'vuvu/types';
 declare module 'vue/types/vue' {
     interface Vue {
         readonly $container: Container;
@@ -11,6 +12,7 @@ export interface InjectConfig {
 }
 export interface ProvideConfig {
     identifier: interfaces.ServiceIdentifier<any>;
+    resolve?: types.Constructor;
 }
 declare module 'vue/types/options' {
     interface ComponentOptions<V extends Vue> {

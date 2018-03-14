@@ -79,7 +79,7 @@ describe('IoC populate object', () => {
 
         @ioc.Injectable()
         class Bar {
-            @ioc.Inject(symbol, { optional: true })
+            @ioc.Inject({ type: symbol, optional: true })
             public foo: string;
         }
 
@@ -97,7 +97,7 @@ describe('IoC populate object', () => {
 
         @ioc.Injectable()
         class Bar {
-            @ioc.Inject(symbol, { optional: true })
+            @ioc.Inject({ type: symbol, optional: true })
             public foo: string;
         }
 

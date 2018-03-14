@@ -1,6 +1,8 @@
 import { Container, interfaces } from 'inversify';
 import Vue from 'vue';
 
+import * as types from 'vuvu/types';
+
 declare module 'vue/types/vue' {
     // tslint:disable-next-line:no-shadowed-variable
     interface Vue {
@@ -15,6 +17,7 @@ export interface InjectConfig {
 
 export interface ProvideConfig {
     identifier: interfaces.ServiceIdentifier<any>;
+    resolve?: types.Constructor;
 }
 
 declare module 'vue/types/options' {

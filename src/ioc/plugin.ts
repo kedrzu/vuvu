@@ -23,9 +23,7 @@ export function IocPlugin(vue: typeof Vue) {
 
             // try get container provided by directive
             if (!container && this.$vnode && this.$vnode.data.directives) {
-                let directive = this.$vnode.data.directives.find(
-                    d => d.name === 'ioc-container'
-                );
+                let directive = this.$vnode.data.directives.find(d => d.name === 'ioc-container');
 
                 container = directive && directive.value;
             }
@@ -55,10 +53,7 @@ export function IocPlugin(vue: typeof Vue) {
                 for (let prop of Object.keys(injects)) {
                     let injectConfig = injects[prop];
 
-                    if (
-                        !injectConfig.optional ||
-                        container.isBound(injectConfig.identifier)
-                    ) {
+                    if (!injectConfig.optional || container.isBound(injectConfig.identifier)) {
                         this[prop] = container.get(injectConfig.identifier);
                     }
                 }
@@ -69,12 +64,21 @@ export function IocPlugin(vue: typeof Vue) {
                 for (let prop of Object.keys(provides)) {
                     let provideConfig = provides[prop];
 
-                    // provided value will be resolved at runtime with
-                    // object property or function call
-                    container.bind(provideConfig.identifier).toDynamicValue(() => {
-                        let value = this[prop];
-                        return typeof value === 'function' ? value.call(this) : value;
-                    });
+                    if (provideConfig.resolve) {
+                        // provided value will resolved now and serve as singleton for child components
+                        container
+                            .bind(provideConfig.identifier)
+                            .to(provideConfig.resolve)
+                            .inSingletonScope();
+                        this[prop] = container.get(provideConfig.identifier);
+                    } else {
+                        // provided value will be resolved at runtime with
+                        // object property or function call
+                        container.bind(provideConfig.identifier).toDynamicValue(() => {
+                            let value = this[prop];
+                            return typeof value === 'function' ? value.call(this) : value;
+                        });
+                    }
                 }
             }
         }
