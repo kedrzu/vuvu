@@ -1,6 +1,6 @@
 {
     "name": "vuvu",
-    "version": "0.6.9",
+    "version": "0.6.10",
     "description": "",
     "main": "index.js",
     "typings": "index.d.ts",
@@ -24,12 +24,12 @@
     },
     "homepage": "https://github.com/kedrzu/vuvu#readme",
     "dependencies": {
-        "axios": "^0.17.1",
-        "inversify": "^4.9.0",
-        "jsep": "^0.3.3",
-        "lodash": "^4.17.4",
-        "reflect-metadata": "^0.1.10",
-        "vue": "^2.5.13",
+        "axios": "^0.18.0",
+        "inversify": "^4.11.0",
+        "jsep": "^0.3.4",
+        "lodash": "^4.17.5",
+        "reflect-metadata": "^0.1.12",
+        "vue": "^2.5.16",
         "vuex": "^3.0.1"
     },
     "devDependencies": {

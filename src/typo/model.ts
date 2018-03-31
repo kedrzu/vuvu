@@ -4,6 +4,7 @@ import * as types from 'vuvu/types';
 import * as typo from 'vuvu/typo';
 
 import * as jsep from 'jsep';
+const jsepParse = require('jsep');
 
 export interface ValidationError {
     key: string;
@@ -15,7 +16,7 @@ export interface ModelValidationErrors {
 }
 
 function enumerable(value: boolean) {
-    return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         descriptor.enumerable = value;
     };
 }
@@ -53,7 +54,7 @@ export class Model {
 
         if (errors && errors.length) {
             for (let error of errors) {
-                let expression = jsep(error.key);
+                let expression = jsepParse(error.key);
                 this.$$addErrorForExpression(expression, error.message);
             }
         }
