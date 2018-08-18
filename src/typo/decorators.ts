@@ -1,4 +1,4 @@
-import { isString } from 'lodash';
+import isString from 'lodash/isString';
 import { Constructor, Dictionary } from 'vuvu/types';
 
 export interface TypoDescriptor {

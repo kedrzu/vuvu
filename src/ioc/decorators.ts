@@ -1,6 +1,8 @@
-import { Container, interfaces } from 'inversify';
+import { interfaces } from 'inversify';
 import { inject as inversifyInject, optional as inversifyOptional } from 'inversify';
-import { isPlainObject, isString, isSymbol } from 'lodash';
+import isPlainObject from 'lodash/isPlainObject';
+import isString from 'lodash/isString';
+import isSymbol from 'lodash/isSymbol';
 
 import 'reflect-metadata';
 import Vue from 'vue';
@@ -121,7 +123,7 @@ function validateServiceIdentifier(identifier: interfaces.ServiceIdentifier<any>
     let prohibited = [Object, Number, Boolean, String];
 
     if (prohibited.indexOf(identifier as any) >= 0) {
-        throw new Error(`Identifier of injected service '${identifier}' is not valid`);
+        throw new Error(`Identifier of injected service '${identifier as any}' is not valid`);
     }
 }
 
