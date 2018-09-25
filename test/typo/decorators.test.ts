@@ -108,7 +108,7 @@ describe('Typo decorator', () => {
         let json = JSON.stringify(obj);
         let value = JSON.parse(json);
 
-        expect(value.type).toBe('myType');
+        expect(value.$type).toBe('myType');
     });
 
     it('includes type property within JSON object when inherited', () => {
@@ -130,8 +130,8 @@ describe('Typo decorator', () => {
         let inheritedJson = JSON.stringify(inheritedObj);
         let inheritedValue = JSON.parse(inheritedJson);
 
-        expect(inheritedValue.type).toBe('myInheritedType');
-        expect(baseValue.type).toBe('myBaseType');
+        expect(inheritedValue.$type).toBe('myInheritedType');
+        expect(baseValue.$type).toBe('myBaseType');
     });
 
     it('allows ignoring attributes when turning into JSON', () => {
@@ -167,9 +167,6 @@ describe('Typo decorator', () => {
             @typo.Property({ json: false })
             public baaz = 234;
         }
-
-        let baseDescriptor = typo.getDescriptor(MyBaseType);
-        let derivedDescriptor = typo.getDescriptor(MyDerivedType);
 
         let obj = new MyDerivedType();
         let json = JSON.stringify(obj);
@@ -286,7 +283,7 @@ describe('Typo decorator', () => {
 
     it('throws error on unresolvable type - unknown type in object literal', () => {
         expect(() => {
-            typo.resolve({ foo: 123, type: 'foo' });
+            typo.resolve({ foo: 123, $type: 'foo' });
         }).toThrowError('Could not resolve type foo');
     });
 

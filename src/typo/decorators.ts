@@ -1,4 +1,3 @@
-import isString from 'lodash/isString';
 import { Constructor, Dictionary } from 'vuvu/types';
 
 export interface TypoDescriptor {
@@ -45,7 +44,7 @@ export function Type(name?: string) {
             let obj = Object.assign({}, this);
 
             if (descriptor.name) {
-                obj.type = descriptor.name;
+                obj.$type = descriptor.name;
             }
 
             for (let key of Object.keys(obj)) {
@@ -119,7 +118,7 @@ export function getDescriptor(type: string | Constructor): TypoDescriptor {
         return null;
     }
 
-    return isString(type) ? types[type as string] : type[typeSymbol];
+    return typeof type === 'string' ? types[type as string] : type[typeSymbol];
 }
 
 export function isTypo(constructor: Constructor) {
@@ -131,7 +130,7 @@ export function resolve<T extends {} = {}>(obj: Partial<T>, type?: string | Cons
         return null;
     }
 
-    type = type || (obj as any).type;
+    type = type || (obj as any).$type;
 
     if (!type) {
         return obj as T;
@@ -147,12 +146,11 @@ export function resolve<T extends {} = {}>(obj: Partial<T>, type?: string | Cons
     let result = new descriptor.type() as any;
 
     Object.assign(result, obj);
-    delete result.type;
+    delete result.$type;
 
     for (let key of Object.keys(descriptor.props)) {
         let prop = descriptor.props[key];
         if (isTypo(prop.type)) {
-            let value = result[key];
             result[key] = resolve(result[key], prop.type);
         }
     }
@@ -165,7 +163,7 @@ function getTypeName(type: any) {
         return '--unknown--';
     }
 
-    if (isString(type)) {
+    if (typeof type === 'string') {
         return type;
     }
 

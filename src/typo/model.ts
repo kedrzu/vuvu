@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import * as ioc from 'vuvu/ioc';
 import * as types from 'vuvu/types';
-import * as typo from 'vuvu/typo';
+
+import { Property, Type } from './decorators';
 
 import * as jsep from 'jsep';
 const jsepParse = require('jsep');
@@ -15,15 +15,9 @@ export interface ModelValidationErrors {
     [key: string]: string[];
 }
 
-function enumerable(value: boolean) {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        descriptor.enumerable = value;
-    };
-}
-
-@typo.Type()
+@Type()
 export class Model {
-    @typo.Property({ json: false })
+    @Property({ json: false })
     public $errors: ModelValidationErrors = null;
 
     public $clearErrors() {
@@ -149,80 +143,3 @@ export class Model {
         }
     }
 }
-
-function addErrorToModel(
-    model: Model,
-    expr: jsep.Expression,
-    error: string
-): ModelValidationErrors {
-    if (!model || !expr) {
-        return null;
-    }
-
-    switch (expr.type) {
-        case 'MemberExpression':
-            let memberExpr = expr as jsep.MemberExpression;
-            let childModel = findChildModel(model, memberExpr.object);
-            return addErrorToModel(childModel, memberExpr.property, error);
-        case 'Identifier':
-            return model.$errors || (model.$errors = {});
-    }
-}
-
-function findChildModel(model: Model, expr: jsep.Expression) {
-    switch (expr.type) {
-        case 'MemberExpression':
-            let memberExpr = expr as jsep.MemberExpression;
-            return findChildModel(model, memberExpr.object);
-        case 'Identifier':
-            let identifier = expr as jsep.Identifier;
-            return model[identifier.name];
-    }
-}
-
-// function tokenizeExpression(expression: string): string[] {
-//     const tokens = [] as string[];
-//     const memberMode = 1;
-//     const dictMode = 2;
-//     const arrayMode = 2;
-
-//     let currentMode = memberMode;
-//     let lastTokenIndex = 0;
-
-//     for (let i = 0; i < expression.length; i++) {
-//         let char = expression[i];
-
-//         if (currentMode === dictMode && isQuotationMark(char)) {
-//         }
-
-//         if (char === '.') {
-//             tokenizeOne(i);
-//             currentMode = memberMode;
-//             i++;
-//             lastTokenIndex = i;
-//         } else if (char === '[') {
-//             tokenizeOne(i);
-//             let nextChar = expression[i + 1];
-//             // tslint:disable-next-line:quotemark
-//             if (nextChar === "'" || nextChar === '"') {
-//                 currentMode = dictMode;
-//                 i += 2;
-//             } else {
-//                 currentMode = arrayMode;
-//                 i++;
-//             }
-//         }
-//     }
-
-//     function tokenizeOne(i: number) {
-//         let token = expression.substring(lastTokenIndex, i);
-//         tokens.push(token);
-//     }
-
-//     function isQuotationMark(char: string) {
-//         // tslint:disable-next-line:quotemark
-//         return nextChar === "'" || nextChar === '"';
-//     }
-
-//     return tokens;
-// }

@@ -1,7 +1,6 @@
 import { interfaces } from 'inversify';
 import { inject as inversifyInject, optional as inversifyOptional } from 'inversify';
 import isPlainObject from 'lodash/isPlainObject';
-import isString from 'lodash/isString';
 import isSymbol from 'lodash/isSymbol';
 
 import 'reflect-metadata';
@@ -112,7 +111,7 @@ function validateServiceIdentifier(identifier: interfaces.ServiceIdentifier<any>
     // TODO: add if statement for webpack builds
 
     // strings and symbols are valid
-    if (isString(identifier) || isSymbol(identifier)) {
+    if (typeof identifier === 'string' || isSymbol(identifier)) {
         return;
     }
 
