@@ -243,12 +243,16 @@ describe('Typo decorator', () => {
     it('makes properties reactive', () => {
         @typo.Type('Baaz')
         class Baaz {
-            @typo.Property() public foo: number;
-            @typo.Property() public bar: number;
+            @typo.Property()
+            public foo: number;
+
+            @typo.Property()
+            public bar: number;
 
             public get moo() {
                 return this.foo;
             }
+
             public set moo(val) {
                 this.foo = val;
             }
@@ -302,4 +306,18 @@ describe('Typo decorator', () => {
             typo.resolve({ foo: 123 }, Foo);
         }).toThrowError('Could not resolve type Foo');
     });
+
+    it('prohibits from creating abstract type instance', () => {
+
+        @typo.AbstractType()
+        // we don't mark it abstract,
+        // because we wouldn't be able to invoke constructor to test it :)
+        class MyType {
+            @typo.Property() public foo;
+            @typo.Property() public bar = 123;
+        }
+
+        expect(() => new MyType()).toThrowError('You cannot instantiate abstract type MyType');
+    });
+
 });

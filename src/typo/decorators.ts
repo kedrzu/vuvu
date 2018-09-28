@@ -16,28 +16,51 @@ export interface TypoPropertyOptions {
 }
 
 const typeSymbol = Symbol.for('vuvu:typo:type');
+const abstractSymbol = Symbol.for('vuvu:typo:abstract');
+
 const types: Dictionary<TypoDescriptor> = {};
 
+export function AbstractType() {
+    return genericTypo(null, true) as <T>(constructor: T) => T;
+}
+
 export function Type(name?: string) {
-    return <T extends { new (...args: any[]): {} }>(constructor: T) => {
+    return genericTypo(name, false);
+}
+
+function genericTypo(name: string, abstract: boolean) {
+    return <T extends { new(...args: any[]): {} }>(constructor: T) => {
         let ownProps = getOwnPropsMeta(constructor.prototype) || {};
         let allProps = getAllPropsMeta(constructor.prototype) || {};
 
         let propNames = Object.keys(ownProps);
 
-        // TODO: probably would be needed in future  (validation and so)
-        for (let prop of propNames) {
-            Object.defineProperty(constructor.prototype, prop, {
-                configurable: true,
-                enumerable: true,
-                writable: true
-            });
+        if (process.env.NODE_ENV !== 'production') {
+            constructor.prototype[abstractSymbol] = abstract;
         }
+
+        let extended = class extends constructor {
+            constructor(...args: any[]) {
+                super(...args);
+
+                if (process.env.NODE_ENV !== 'production') {
+                    if (this[abstractSymbol]) {
+                        throw new Error(`You cannot instantiate abstract type ${constructor.name}`);
+                    }
+                }
+
+                for (let prop of propNames) {
+                    if (this[prop] === undefined) {
+                        this[prop] = null;
+                    }
+                }
+            }
+        };
 
         let descriptor: TypoDescriptor = {
             name: name,
-            type: extendTypo(constructor, propNames),
-            props: ownProps
+            type: extended,
+            props: allProps
         };
 
         constructor.prototype.toJSON = function() {
@@ -64,24 +87,10 @@ export function Type(name?: string) {
     };
 }
 
-function extendTypo(constructor: Constructor, propNames: string[]) {
-    return class extends constructor {
-        constructor(...args: any[]) {
-            super(...args);
-
-            for (let prop of propNames) {
-                if (this[prop] === undefined) {
-                    this[prop] = null;
-                }
-            }
-        }
-    };
-}
-
 const propsSymbol = Symbol.for('vuvu:typo:props');
 export function Property(options?: TypoPropertyOptions) {
     options = options || {};
-    return function<T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) {
+    return function <T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) {
         let targetMeta = getOwnPropsMeta(target);
         if (!targetMeta) {
             targetMeta = {};

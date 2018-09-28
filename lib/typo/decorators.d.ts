@@ -11,6 +11,7 @@ export interface TypoPropertyDescriptor {
 export interface TypoPropertyOptions {
     json?: boolean;
 }
+export declare function AbstractType(): <T>(constructor: T) => T;
 export declare function Type(name?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
 export declare function Property(options?: TypoPropertyOptions): <T>(target: T, propertyKey: string, descriptor?: PropertyDescriptor) => void;
 export declare function getDescriptor(type: string | Constructor): TypoDescriptor;
