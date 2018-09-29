@@ -1,7 +1,11 @@
 import { Constructor, Dictionary } from 'vuvu/types';
 
-export interface TypoDescriptor {
-    name: string;
+export interface TypoConfig {
+    id?: string;
+    name?: string;
+}
+
+export interface TypoDescriptor extends TypoConfig {
     type: Constructor;
     props: Dictionary<TypoPropertyDescriptor>;
 }
@@ -21,14 +25,20 @@ const abstractSymbol = Symbol.for('vuvu:typo:abstract');
 const types: Dictionary<TypoDescriptor> = {};
 
 export function AbstractType() {
-    return genericTypo(null, true) as <T>(constructor: T) => T;
+    return genericTypo({}, true) as <T>(constructor: T) => T;
 }
 
-export function Type(name?: string) {
-    return genericTypo(name, false);
+export function Type(config?: TypoConfig);
+export function Type(id: string);
+export function Type(idOrConfig?: string | TypoConfig) {
+    if (typeof idOrConfig === 'string') {
+        return genericTypo({ id: idOrConfig }, false);
+    }
+
+    return genericTypo(idOrConfig || {}, false);
 }
 
-function genericTypo(name: string, abstract: boolean) {
+function genericTypo(config: TypoConfig, abstract: boolean) {
     return <T extends { new(...args: any[]): {} }>(constructor: T) => {
         let ownProps = getOwnPropsMeta(constructor.prototype) || {};
         let allProps = getAllPropsMeta(constructor.prototype) || {};
@@ -58,16 +68,17 @@ function genericTypo(name: string, abstract: boolean) {
         };
 
         let descriptor: TypoDescriptor = {
-            name: name,
+            id: config.id || null,
+            name: config.name || null,
             type: extended,
             props: allProps
         };
 
-        constructor.prototype.toJSON = function() {
+        constructor.prototype.toJSON = function () {
             let obj = Object.assign({}, this);
 
-            if (descriptor.name) {
-                obj.$type = descriptor.name;
+            if (descriptor.id) {
+                obj.$type = descriptor.id;
             }
 
             for (let key of Object.keys(obj)) {
@@ -80,7 +91,9 @@ function genericTypo(name: string, abstract: boolean) {
             return obj;
         };
 
-        types[name] = descriptor;
+        if (descriptor.id) {
+            types[descriptor.id] = descriptor;
+        }
         descriptor.type[typeSymbol] = descriptor;
 
         return descriptor.type as T;
@@ -127,7 +140,9 @@ export function getDescriptor(type: string | Constructor): TypoDescriptor {
         return null;
     }
 
-    return typeof type === 'string' ? types[type as string] : type[typeSymbol];
+    let descriptor = typeof type === 'string' ? types[type as string] : type[typeSymbol];
+
+    return descriptor || null;
 }
 
 export function isTypo(constructor: Constructor) {

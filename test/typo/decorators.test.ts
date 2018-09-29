@@ -3,18 +3,37 @@ import * as typo from 'vuvu/typo';
 import Vue from 'vue';
 
 describe('Typo decorator', () => {
-    it('registers type with specific name', () => {
+    it('registers type with specific id', () => {
         @typo.Type('myType')
         class MyType {
             public foo = 123;
         }
 
-        let type = typo.getDescriptor('myType');
+        let descriptorById = typo.getDescriptor('myType');
+        let descriptorByType = typo.getDescriptor(MyType);
 
-        expect(type.type).toBe(MyType);
+        expect(descriptorById).not.toBeNull();
+        expect(descriptorById.id).toBe('myType');
+        expect(descriptorById.name).toBeNull();
+        expect(descriptorById).toBe(descriptorByType);
     });
 
-    it('registers type without name', () => {
+    it('registers type with specific id and name', () => {
+        @typo.Type({ id: 'myType', name: 'foo' })
+        class MyType {
+            public foo = 123;
+        }
+
+        let descriptorById = typo.getDescriptor('myType');
+        let descriptorByType = typo.getDescriptor(MyType);
+
+        expect(descriptorById).not.toBeNull();
+        expect(descriptorById.id).toBe('myType');
+        expect(descriptorById.name).toBe('foo');
+        expect(descriptorById).toBe(descriptorByType);
+    });
+
+    it('registers type without id', () => {
         @typo.Type()
         class TypodType {
             public foo = 123;
@@ -26,6 +45,28 @@ describe('Typo decorator', () => {
 
         expect(typo.isTypo(TypodType)).toBe(true);
         expect(typo.isTypo(NoTypodType)).toBe(false);
+        expect(typo.getDescriptor(NoTypodType)).toBeNull();
+
+        let descriptor = typo.getDescriptor(TypodType);
+
+        expect(descriptor).not.toBeNull();
+        expect(descriptor.id).toBeNull();
+        expect(descriptor.name).toBeNull();
+    });
+
+    it('registers type without id but with name', () => {
+        @typo.Type({ name: 'foo' })
+        class TypodType {
+            public foo = 123;
+        }
+
+        expect(typo.isTypo(TypodType)).toBe(true);
+
+        let descriptor = typo.getDescriptor(TypodType);
+
+        expect(descriptor).not.toBeNull();
+        expect(descriptor.id).toBeNull();
+        expect(descriptor.name).toBe('foo');
     });
 
     it('defines properties for object', () => {
