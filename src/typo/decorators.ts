@@ -1,5 +1,7 @@
 import { Constructor, Dictionary } from 'vuvu/types';
 
+import { getAllMetadata } from '../reflection';
+
 export interface TypoConfig {
     id?: string;
     name?: string;
@@ -122,13 +124,7 @@ export function Property(options?: TypoPropertyOptions) {
 }
 
 function getAllPropsMeta(target: any) {
-    let meta = {};
-    while (target) {
-        Object.assign(meta, Reflect.getMetadata(propsSymbol, target));
-        target = Reflect.getPrototypeOf(target);
-    }
-
-    return meta;
+    return getAllMetadata(propsSymbol, target) as Dictionary<TypoPropertyDescriptor>;
 }
 
 function getOwnPropsMeta(target: any) {

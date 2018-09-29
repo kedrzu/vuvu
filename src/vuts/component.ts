@@ -1,6 +1,6 @@
-import Vue, { ComponentOptions } from 'vue';
+import Vue, { ComponentOptions as VueComponentOptions } from 'vue';
 
-import * as defs from './defs';
+import { ComponentOptions } from './defs';
 import * as reflection from './reflection';
 
 // this is kind of a hack - Vue.util is not a part of official API
@@ -10,20 +10,20 @@ declare module 'vue/types/vue' {
     }
 }
 
-export function setupComponent(component, options?: ComponentOptions<Vue>) {
-    if (!options) {
-        options = {} as ComponentOptions<Vue>;
-    }
-    options.name = component.name;
+export function setupComponent(component, options?: ComponentOptions) {
 
-    reflection.getDecorators(component).forEach(d => d(options));
+    let vueOptions: VueComponentOptions<Vue> = {
+        name: component.name
+    };
+
+    reflection.getDecorators(component).forEach(d => d(vueOptions));
 
     if (component.prototype.render) {
-        options.render = component.prototype.render;
+        vueOptions.render = component.prototype.render;
     }
 
     if (options && options.components) {
-        options.components = options.components;
+        vueOptions.components = options.components;
     }
 
     let proto = component.prototype;
@@ -36,7 +36,7 @@ export function setupComponent(component, options?: ComponentOptions<Vue>) {
         let descriptor = Object.getOwnPropertyDescriptor(proto, key);
 
         if (descriptor.get || descriptor.set) {
-            let computed = options.computed || (options.computed = {});
+            let computed = vueOptions.computed || (vueOptions.computed = {});
             computed[key] = {
                 get: descriptor.get,
                 set: descriptor.set
@@ -44,10 +44,10 @@ export function setupComponent(component, options?: ComponentOptions<Vue>) {
         }
     });
 
-    return extendComponent(component, options);
+    return extendComponent(component, vueOptions);
 }
 
-function extendComponent(component, options) {
+function extendComponent(component, options: VueComponentOptions<Vue>) {
     let base = Object.getPrototypeOf(component);
 
     component.options = Vue.util.mergeOptions(base.options, options);

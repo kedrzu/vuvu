@@ -1,8 +1,8 @@
 import { PropOptions, WatchOptions } from 'vue';
-import * as defs from './defs';
+import { ComponentOptions } from './defs';
 export declare function Component(): any;
-export declare function Component(options: defs.ComponentOptions): any;
-export declare function Component(id: string, options?: defs.ComponentOptions): any;
+export declare function Component(options: ComponentOptions): any;
+export declare function Component(id: string, options?: ComponentOptions): any;
 export declare function Ref(refName?: string): (target: any, propertyKey: string) => void;
 export declare function Prop(options?: PropOptions): (target: any, propertyKey: string) => void;
 export declare function Data(defaultValue?: () => any): (target: any, propertyKey: string) => void;

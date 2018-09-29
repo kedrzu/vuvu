@@ -1,15 +1,16 @@
 import Vue, { PropOptions, WatchOptions } from 'vue';
 
 import * as cmp from './component';
-import * as defs from './defs';
 import * as reflection from './reflection';
 
+import { ComponentOptions } from './defs';
+
 export function Component();
-export function Component(options: defs.ComponentOptions): any;
-export function Component(id: string, options?: defs.ComponentOptions): any;
+export function Component(options: ComponentOptions): any;
+export function Component(id: string, options?: ComponentOptions): any;
 export function Component(
-    idOrOptions?: string | defs.ComponentOptions,
-    options?: defs.ComponentOptions
+    idOrOptions?: string | ComponentOptions,
+    options?: ComponentOptions
 ): any {
     return <T>(constructor: T) => {
         let id: string = null;
@@ -31,7 +32,7 @@ export function Component(
 
 export function Ref(refName?: string) {
     return (target: any, propertyKey: string) => {
-        reflection.addLifecycleHook(target, 'created', function() {
+        reflection.addLifecycleHook(target, 'created', function () {
             Object.defineProperty(this, propertyKey, {
                 get() {
                     return this.$refs[refName || propertyKey];
@@ -97,7 +98,7 @@ export function Provide(name?: string) {
             target[provideSymbol] = meta = {};
 
             reflection.addDecorator(target, opts => {
-                opts.provide = function() {
+                opts.provide = function () {
                     const values = {};
 
                     for (let i in meta) {
@@ -136,7 +137,7 @@ export function Watch<T = any>(propName: keyof T, watchOptions?: WatchOptions) {
                 componentOptions.watch = {};
             }
 
-            componentOptions.watch[propName] = Object.assign({
+            componentOptions.watch[propName as string] = Object.assign({
                 handler: descriptor.value,
                 watchOptions
             });
