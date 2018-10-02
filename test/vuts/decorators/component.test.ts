@@ -1,10 +1,5 @@
-import Vue from 'vue';
-
-import SimpleComponent from '../components/SimpleComponent';
-import '../components/SimpleComponent.vue';
-
-import DerivedComponent from '../components/DerivedComponent';
-import '../components/DerivedComponent.vue';
+import DerivedComponent from '../components/DerivedComponent.vue';
+import SimpleComponent from '../components/SimpleComponent.vue';
 
 describe('Vue component decorator', () => {
     it('allows to use ES6 classes as Vue components', () => {
@@ -22,7 +17,7 @@ describe('Vue component decorator', () => {
                 foobar: 'foo',
                 kaz: 'far'
             }
-        });
+        }) as any;
 
         component.$mount();
 
@@ -37,7 +32,7 @@ describe('Vue component decorator', () => {
                 foobar: 'foo',
                 kaz: 'far'
             }
-        });
+        }) as any;
 
         component.$mount();
 

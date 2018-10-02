@@ -1,39 +1,34 @@
-var Typescript = require('awesome-typescript-loader');
-var webpack = require('webpack');
+const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
+    mode: 'development',
     resolve: {
         extensions: ['.ts', '.js', '.vue'],
         plugins: [
-            // this plugin must exceptionally be loaded from here
-            // otherwise TS paths config will not work
-            new Typescript.TsConfigPathsPlugin()
+            new TsConfigPathsPlugin()
         ]
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: 'awesome-typescript-loader'
-                    }
-                ]
+                loader: 'ts-loader',
+                options: {
+                    appendTsSuffixTo: [/\.vue$/]
+                }
             },
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        ts: 'awesome-typescript-loader'
-                    }
-                }
+                loader: 'vue-loader'
             }
         ]
     },
     stats: {
         errorDetails: true
     },
-    plugins: [new Typescript.CheckerPlugin()],
+    plugins: [
+        new VueLoaderPlugin(),
+    ],
     devtool: 'eval-source-map'
 };

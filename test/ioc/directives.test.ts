@@ -2,8 +2,7 @@ import Vue from 'vue';
 
 import * as ioc from 'vuvu/ioc';
 
-import Component from './components/ParentComponentWithDirective';
-import './components/ParentComponentWithDirective.vue';
+import Component from './components/ParentComponentWithDirective.vue';
 
 Vue.use(ioc.IocPlugin);
 

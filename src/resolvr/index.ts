@@ -22,7 +22,7 @@ interface ResolvableMetadata {
 export function Resolvable(options: ResolvableOptions) {
     return <T>(constructor: Constructor<T>) => {
         let meta = getMetadata(options.for.prototype);
-        let role = options.role || null;
+        let role = (options.role || null) as string;
         let types = meta.types[role] || (meta.types[role] = []);
 
         types.push({
