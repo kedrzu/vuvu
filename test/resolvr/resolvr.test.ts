@@ -3,6 +3,7 @@ import * as resolvr from 'vuvu/resolvr';
 import Vue from 'vue';
 
 describe('Resolvr', () => {
+
     it('registers type one to one', () => {
 
         class Model {

@@ -1,5 +1,5 @@
 
-import { AbstractConstructor, Constructor, Dictionary } from '../types';
+import { AbstractConstructor, Constructor, DefaultConstructor, Dictionary } from '../types';
 
 export interface ResolvableOptions {
     for: AbstractConstructor;
