@@ -11,7 +11,7 @@ describe('IoC directives', () => {
         let container = new ioc.Container();
         let component = new Component({
             container: container
-        });
+        }) as any;
 
         component.$mount();
 
