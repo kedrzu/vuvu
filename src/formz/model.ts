@@ -3,37 +3,6 @@ import Vue from 'vue';
 import * as jsep from 'jsep';
 const jsepParse = require('jsep');
 
-
-type ModelOrDefault<T> =
-    T extends object[] ? Array<Model<T[number]>> :
-    T extends any[] ? T :
-    T extends object ? Model<T> : T;
-
-type ModelProperties<T> = {
-    [P in keyof T]: ModelOrDefault<T[P]>
-};
-
-export type Model<T extends object> = ModelBase & ModelProperties<T>;
-
-const modelSymbol = Symbol.for('vuvu:model');
-
-export function modelify<T>(value: T): ModelOrDefault<T> {
-    if (!value) {
-        return value as ModelOrDefault<T>;
-    }
-
-    if (Array.isArray(value)) {
-        modelifyArray(value);
-    } else if (value instanceof Object) {
-        modelifyObject(value as any);
-    }
-
-    return value as ModelOrDefault<T>;
-}
-
-
-
-
 interface ModelBase {
     $errors?: ModelErrors;
 }
@@ -47,44 +16,6 @@ export interface ModelErrors {
     [key: string]: string[];
 }
 
-function modelifyArray<T>(array: T[]): void {
-    for (let item of array) {
-        modelify(item);
-    }
-}
-
-function modelifyObject<T extends ModelBase>(obj: T): void {
-    if (obj[modelSymbol]) {
-        // already modelified
-        return;
-    }
-
-    // Object.defineProperties(obj, {
-    //     $errors: {
-    //         configurable: true,
-    //         enumerable: false,
-    //         writable: true
-    //     },
-    //     $getErrorsFor: {
-    //         configurable: false,
-    //         enumerable: false,
-    //         value: getErrorsFor
-    //     },
-    //     $clearErrorsFor: {
-    //         configurable: false,
-    //         enumerable: false,
-    //         value: clearErrorsFor
-    //     },
-    //     $clearAllErrors: {
-    //         configurable: false,
-    //         enumerable: false,
-    //         value: clearAllErrors
-    //     }
-    // });
-
-    obj[modelSymbol] = true;
-}
-
 export function hasErrors<T extends object>(model: T) {
     let errorsAll = model && (model as ModelBase).$errors;
     return errorsAll && Object.keys(errorsAll).length > 0;
@@ -95,6 +26,10 @@ export function getErrorsForProp<T extends object>(model: T, prop: string): stri
     let errorsForKey = prop != null && errorsAll && errorsAll[prop.toString()];
 
     return errorsForKey || [];
+}
+
+export function getErrors(model: object) {
+    return (model as ModelBase).$errors || Vue.set(model, '$errors', {});
 }
 
 export function clearErrorsForProp<T extends object>(model: T, prop: string): void {
@@ -174,8 +109,8 @@ function addErrorForExpression<T extends object>(model: T, expr: jsep.Expression
 }
 
 function addErrorForKey<T extends ModelBase>(model: T, key: string, message: string) {
-    let errors = model.$errors || (model.$errors = {});
-    let forKey = errors[key] || (errors[key] = []);
+    let errors = getErrors(model);
+    let forKey = errors[key] || Vue.set(errors, key, []);
 
     forKey.push(message);
 }
@@ -204,14 +139,4 @@ function findChildModel<T extends ModelBase>(model: T, expr: jsep.Expression): M
             return findChildModel(childModel, memberExpr.property);
         }
     }
-}
-
-interface Foobar {
-    foo: string;
-}
-
-class Goobar {
-    public foo: string;
-    public bar: Foobar;
-    public gooz: Foobar[];
 }

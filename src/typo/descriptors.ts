@@ -35,7 +35,7 @@ export function DescriptorFor(type: string) {
 /**
  * Describes a specific type of object
  */
-export class Descriptor<T extends WithType> {
+export abstract class Descriptor<T extends WithType> {
     public readonly type: string;
 
     public make(props?: Partial<T>): T {
@@ -49,9 +49,7 @@ export class Descriptor<T extends WithType> {
         return obj;
     }
 
-    public fill(obj: T): void {
-        // nothing as default here
-    }
+    public abstract fill(obj: T): void;
 }
 
 /**

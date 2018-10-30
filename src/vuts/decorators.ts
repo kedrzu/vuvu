@@ -20,7 +20,7 @@ export function Component(
             options = idOrOptions;
         }
 
-        let c = cmp.setupComponent(constructor as any, options);
+        let c = cmp.setupComponent(constructor as any, options || {});
 
         if (id) {
             Vue.component(id, c);

@@ -10,10 +10,10 @@ declare module 'vue/types/vue' {
     }
 }
 
-export function setupComponent(component, options?: ComponentOptions) {
+export function setupComponent(component, options: ComponentOptions) {
 
     let vueOptions: VueComponentOptions<Vue> = {
-        name: component.name
+        name: options.name || component.name
     };
 
     reflection.getDecorators(component).forEach(d => d(vueOptions));
