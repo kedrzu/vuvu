@@ -1,6 +1,7 @@
-import { DefaultConstructor, Dictionary } from '../types';
+import { DefaultConstructor } from '../types';
 
-const descriptors: Dictionary<Descriptor<any>> = {};
+import { Descriptor, Typed } from './descriptor';
+import { descriptors } from './descriptorRegister';
 
 /**
  * Registers descriptor for specific type
@@ -33,45 +34,18 @@ export function DescriptorFor(type: string) {
 }
 
 /**
- * Describes a specific type of object
- */
-export abstract class Descriptor<T extends WithType> {
-    public readonly type: string;
-
-    public make(props?: Partial<T>): T {
-        let obj = {
-            $type: this.type
-        } as T;
-
-        this.fill(obj);
-
-        Object.assign(obj, props);
-        return obj;
-    }
-
-    public abstract fill(obj: T): void;
-}
-
-/**
- * Marks object as having a type defined.
- */
-export interface WithType<T = string> {
-    $type: T;
-}
-
-/**
  * Retrieves descriptor for given type
  * @param type Name of type
  */
-export function getDescriptorFor(type: string);
+export function getDescriptorFor(type: string): Descriptor;
 
 /**
  * Retrieves descriptor for given typed object
  * @param obj Object to retrieve descriptor for
  */
-export function getDescriptorFor(obj: WithType);
+export function getDescriptorFor(obj: Typed): Descriptor;
 
-export function getDescriptorFor(objOrType: WithType | string) {
+export function getDescriptorFor(objOrType: Typed | string): Descriptor {
     if (!objOrType) {
         return null;
     }
@@ -84,7 +58,7 @@ export function getDescriptorFor(objOrType: WithType | string) {
         return descriptors[objOrType.$type] || null;
     }
 
-    return null;
+    return undefined;
 }
 
 export function clearAllDescriptors() {

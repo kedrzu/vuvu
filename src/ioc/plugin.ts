@@ -1,4 +1,3 @@
-import { Container } from 'inversify';
 import Vue from 'vue';
 
 const containerSymbol = Symbol('vuvu:ioc-container');

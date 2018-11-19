@@ -1,4 +1,6 @@
 export * from './decorators';
 export * from './model';
-export { Descriptor, DescriptorFor, getDescriptorFor, WithType } from './descriptors';
-export * from './resolve';
+export * from './descriptor';
+export { DescriptorFor, getDescriptorFor } from './descriptorHelpers';
+export * from './typeRegister';
+export * from './plugin';
